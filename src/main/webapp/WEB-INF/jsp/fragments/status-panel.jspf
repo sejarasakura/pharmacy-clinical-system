@@ -1,0 +1,10 @@
+<section class="card status-panel status-panel-${statusTone}" aria-labelledby="status-title">
+  <div class="status-symbol" aria-hidden="true">!</div>
+  <p class="status-kicker">Error ${statusCode}</p>
+  <h1 id="status-title" class="page-title">${statusTitle}</h1>
+  <p class="status-message">${statusMessage}</p>
+  <div class="status-actions">
+    <a class="btn btn-primary" href="${pageContext.request.contextPath}${primaryHref}">${primaryLabel}</a>
+    <c:if test="${showBack}"><a class="btn btn-secondary" href="javascript:history.back()">Back</a></c:if>
+  </div>
+</section>

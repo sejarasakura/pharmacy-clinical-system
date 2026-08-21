@@ -1,0 +1,16 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<aside class="sidebar">
+  <a class="brand" href="${homeHref}" aria-label="PharmaCare home">
+    <span class="brand-logo" aria-hidden="true">+</span>
+    <span class="brand-name">PharmaCare</span>
+  </a>
+  <nav class="nav" aria-label="Primary navigation">
+    <c:forEach items="${navItems}" var="item">
+      <a class="nav-item${item.key eq activeNavKey ? ' active' : ''}"
+         href="${pageContext.request.contextPath}${item.href}"
+         ${item.key eq activeNavKey ? 'aria-current="page"' : ''}>
+        <span aria-hidden="true">${item.iconName}</span><span>${item.label}</span>
+      </a>
+    </c:forEach>
+  </nav>
+</aside>

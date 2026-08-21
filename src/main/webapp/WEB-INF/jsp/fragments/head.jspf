@@ -1,0 +1,11 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title}</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/pharmacare.css">
+<script defer src="${pageContext.request.contextPath}/static/js/app-shell.js"></script>
+<script defer src="${pageContext.request.contextPath}/static/js/password-visibility.js"></script>
+<script defer src="${pageContext.request.contextPath}/static/js/form-submit-lock.js"></script>
+<script defer src="${pageContext.request.contextPath}/static/js/projected-balance.js"></script>
+<script defer src="${pageContext.request.contextPath}/static/js/filter-clear.js"></script>
+<script defer src="${pageContext.request.contextPath}/static/js/focus-first-invalid.js"></script>

@@ -1,0 +1,8 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:if test="${not empty page and page.totalPages gt 1}">
+  <nav class="pagination" aria-label="Pagination">
+    <c:forEach begin="1" end="${page.totalPages}" var="pageNumber">
+      <a class="btn btn-secondary" href="?page=${pageNumber}">${pageNumber}</a>
+    </c:forEach>
+  </nav>
+</c:if>

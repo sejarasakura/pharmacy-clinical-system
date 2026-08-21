@@ -1,0 +1,5 @@
+<div class="app-shell">
+  <%@ include file="sidebar.jspf" %>
+  <div class="main-panel">
+    <%@ include file="topbar.jspf" %>
+    <main class="page" id="main-content">

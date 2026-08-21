@@ -1,0 +1,12 @@
+<header class="topbar">
+  <div class="breadcrumb"><span class="current">${breadcrumb}</span></div>
+  <div class="user-box">
+    <span class="avatar" aria-hidden="true">${currentUserInitial}</span>
+    <span>${currentUser}</span>
+    <span class="role-badge">${currentRole}</span>
+    <form method="post" action="${pageContext.request.contextPath}/logout">
+      <%@ include file="csrf.jspf" %>
+      <button class="btn btn-link" type="submit">Log out</button>
+    </form>
+  </div>
+</header>

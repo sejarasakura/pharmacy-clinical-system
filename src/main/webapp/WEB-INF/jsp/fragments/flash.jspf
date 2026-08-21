@@ -1,0 +1,4 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:if test="${not empty flash}">
+  <div class="alert alert-${flash.type}" role="status">${flash.message}</div>
+</c:if>

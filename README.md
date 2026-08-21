@@ -6,6 +6,11 @@ PharmaCare is a Spring Boot web application for managing a small pharmacy workfl
 
 PharmaCare gives a pharmacy one controlled workspace for the medication journey: from an approved user account and prescription, through stock-aware dispensing, to patient visibility and management reporting. Its business purpose is to reduce fragmented manual work, prevent unauthorised access, and make the operational status of medicines and prescriptions visible to the right person at the right time.
 
+## Design and architecture sources
+
+- [Figma UI design](https://www.figma.com/design/Hn3t09dEGtunesiH5ytytn/Untitled?node-id=0-1&p=f&m=dev)
+- [Draw.io architecture diagram](https://drive.google.com/file/d/1NkfRiLM-UqmF4XGflLnZ6zo3svQE-5zj/view?usp=sharing)
+
 ## What the application does
 
 - Administrators create accounts, assign one role, approve registrations, and manage member status.
