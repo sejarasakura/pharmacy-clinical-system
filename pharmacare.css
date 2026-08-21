@@ -1,0 +1,610 @@
+/* PharmaCare — simple desktop stylesheet
+   Reference: Figma file Hn3t09dEGtunesiH5ytytn
+   Intended for Spring Boot + JSP/HTML. No Tailwind dependency.
+*/
+
+:root {
+  /* Brand / surfaces */
+  --pc-primary: #0284c7;
+  --pc-primary-soft: #e0f2fe;
+  --pc-bg: #f8fafc;
+  --pc-surface: #ffffff;
+  --pc-surface-soft: #f1f5f9;
+
+  /* Text */
+  --pc-text: #0f172a;
+  --pc-text-secondary: #334155;
+  --pc-text-muted: #64748b;
+  --pc-text-subtle: #94a3b8;
+
+  /* Borders */
+  --pc-border: #e2e8f0;
+
+  /* Semantic states */
+  --pc-success: #16a34a;
+  --pc-success-bg: #dcfce7;
+  --pc-warning: #d97706;
+  --pc-warning-bg: #fef3c7;
+  --pc-info: #2563eb;
+  --pc-info-bg: #dbeafe;
+  --pc-danger: #dc2626;
+  --pc-danger-bg: #fee2e2;
+
+  /* Shape */
+  --pc-radius-sm: 4px;
+  --pc-radius-md: 8px;
+  --pc-radius-lg: 12px;
+
+  /* Layout */
+  --pc-sidebar-width: 260px;
+  --pc-page-x: 32px;
+  --pc-page-y: 24px;
+
+  /* Shadow */
+  --pc-shadow-card: 0 4px 12px rgba(0, 0, 0, 0.02);
+  --pc-shadow-sticky: 0 -4px 6px rgba(0, 0, 0, 0.03);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--pc-bg);
+  color: var(--pc-text);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+}
+
+/* ---------- Application shell ---------- */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--pc-bg);
+}
+
+.sidebar {
+  width: var(--pc-sidebar-width);
+  flex: 0 0 var(--pc-sidebar-width);
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--pc-surface);
+  border-right: 1px solid var(--pc-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-primary);
+  color: #fff;
+}
+
+.brand-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--pc-text);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 42px;
+  padding: 12px 16px;
+  border-radius: var(--pc-radius-md);
+  color: var(--pc-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: var(--pc-surface-soft);
+}
+
+.nav-item.active {
+  color: var(--pc-primary);
+  background: var(--pc-primary-soft);
+  font-weight: 600;
+}
+
+.main-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 32px;
+  background: var(--pc-surface);
+  border-bottom: 1px solid var(--pc-border);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pc-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.breadcrumb .current {
+  color: var(--pc-text);
+  font-weight: 600;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--pc-primary-soft);
+  color: var(--pc-primary);
+  font-weight: 700;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-primary-soft);
+  color: var(--pc-primary);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ---------- Page structure ---------- */
+
+.page {
+  padding: var(--pc-page-y) var(--pc-page-x) 40px;
+}
+
+.page-header,
+.command-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.page-title {
+  margin: 0;
+  color: var(--pc-text);
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.page-subtitle {
+  margin: 4px 0 0;
+  color: var(--pc-text-muted);
+  font-size: 13px;
+}
+
+.section-title {
+  margin: 0;
+  color: var(--pc-text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--pc-text-muted);
+}
+
+.subtle {
+  color: var(--pc-text-subtle);
+}
+
+/* ---------- Cards / panels ---------- */
+
+.card {
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  box-shadow: var(--pc-shadow-card);
+}
+
+.card-body {
+  padding: 24px;
+}
+
+.card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--pc-border);
+  border: 0;
+}
+
+/* ---------- Toolbar / filters ---------- */
+
+.toolbar,
+.filter-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.filter-control {
+  min-width: 180px;
+}
+
+.filter-search {
+  width: 220px;
+}
+
+/* ---------- Forms ---------- */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  color: var(--pc-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea,
+.input {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 14px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  color: var(--pc-text);
+  font: inherit;
+  outline: none;
+}
+
+textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.input:focus-within {
+  border-color: var(--pc-primary);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--pc-surface-soft);
+  color: var(--pc-text-muted);
+  cursor: not-allowed;
+}
+
+.field-error {
+  color: var(--pc-danger);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.input-error {
+  border-color: var(--pc-danger);
+}
+
+.selected-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px;
+  border: 1px solid var(--pc-primary);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-primary-soft);
+}
+
+.item-card {
+  padding: 20px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+}
+
+.item-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-surface-soft);
+  color: var(--pc-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--pc-radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--pc-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+.btn-secondary {
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
+  border-color: var(--pc-border);
+}
+
+.btn-secondary:hover {
+  background: var(--pc-surface-soft);
+}
+
+.btn-link {
+  min-height: auto;
+  padding: 0;
+  color: var(--pc-primary);
+  background: transparent;
+}
+
+.btn-danger,
+.text-danger {
+  color: var(--pc-danger);
+}
+
+.btn-add {
+  width: 100%;
+  min-height: 42px;
+  border: 1.5px dashed var(--pc-primary);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  color: var(--pc-primary);
+}
+
+/* ---------- Data table ---------- */
+
+.table-wrap {
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow-card);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  padding: 12px 14px;
+  background: var(--pc-surface-soft);
+  color: var(--pc-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 14px;
+  border-top: 1px solid var(--pc-border);
+  color: var(--pc-text-secondary);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+  background: #fbfdff;
+}
+
+.data-table .primary-cell {
+  color: var(--pc-text);
+  font-weight: 600;
+}
+
+/* ---------- Status badges ---------- */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-success {
+  color: var(--pc-success);
+  background: var(--pc-success-bg);
+}
+
+.status-warning {
+  color: var(--pc-warning);
+  background: var(--pc-warning-bg);
+}
+
+.status-info {
+  color: var(--pc-info);
+  background: var(--pc-info-bg);
+}
+
+.status-neutral {
+  color: #475569;
+  background: var(--pc-surface-soft);
+}
+
+.status-danger {
+  color: var(--pc-danger);
+  background: var(--pc-danger-bg);
+}
+
+/* ---------- Alerts ---------- */
+
+.alert {
+  padding: 12px 16px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  font-size: 13px;
+}
+
+.alert-success {
+  color: var(--pc-success);
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.alert-warning {
+  color: #92400e;
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.alert-danger {
+  color: #991b1b;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+/* ---------- Sticky form actions ---------- */
+
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 32px;
+  margin: 24px -32px -40px;
+  background: var(--pc-surface);
+  border-top: 1px solid var(--pc-border);
+  box-shadow: var(--pc-shadow-sticky);
+}
+
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---------- Accessibility ---------- */
+
+a,
+button,
+input,
+select,
+textarea {
+  outline-offset: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--pc-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Desktop application: preserve the wide-data layout.
+   At smaller desktop widths, allow horizontal scrolling rather than hiding data. */
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 220px;
+    flex-basis: 220px;
+  }
+
+  .page,
+  .topbar {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  .data-table {
+    min-width: 900px;
+  }
+}
