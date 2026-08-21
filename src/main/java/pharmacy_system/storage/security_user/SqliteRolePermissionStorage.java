@@ -1,0 +1,20 @@
+package pharmacy_system.storage.security_user;
+
+import pharmacy_system.model.security_user.RolePermission;
+import java.sql.*;
+import java.util.*;
+
+/** SQLite implementation of durable roles, permissions and user-role assignments. */
+public class SqliteRolePermissionStorage implements RolePermissionStorage {
+    private final SqliteDatabase database; public SqliteRolePermissionStorage(SqliteDatabase database){this.database=database;}
+    public RolePermission create(RolePermission r){try(Connection c=database.connection();PreparedStatement s=c.prepareStatement("INSERT INTO roles(role_name,permissions,active,version) VALUES(?,?,?,1)",Statement.RETURN_GENERATED_KEYS)){bind(s,r);s.executeUpdate();try(ResultSet k=s.getGeneratedKeys()){k.next();return findById(k.getLong(1)).orElseThrow();}}catch(SQLException e){throw fail(e);}}
+    public Optional<RolePermission> findById(long id){return find("SELECT * FROM roles WHERE role_id=?",id);} public Optional<RolePermission> findByRoleName(String name){try(Connection c=database.connection();PreparedStatement s=c.prepareStatement("SELECT * FROM roles WHERE role_name=?")){s.setString(1,name);try(ResultSet r=s.executeQuery()){return r.next()?Optional.of(row(r)):Optional.empty();}}catch(SQLException e){throw fail(e);}}
+    private Optional<RolePermission> find(String q,long id){try(Connection c=database.connection();PreparedStatement s=c.prepareStatement(q)){s.setLong(1,id);try(ResultSet r=s.executeQuery()){return r.next()?Optional.of(row(r)):Optional.empty();}}catch(SQLException e){throw fail(e);}}
+    public boolean update(RolePermission r,long version){try(Connection c=database.connection();PreparedStatement s=c.prepareStatement("UPDATE roles SET role_name=?,permissions=?,active=?,version=version+1 WHERE role_id=? AND version=?")){bind(s,r);s.setLong(4,r.getRoleId());s.setLong(5,version);return s.executeUpdate()==1;}catch(SQLException e){throw fail(e);}}
+    public boolean delete(long id){try(Connection c=database.connection();PreparedStatement s=c.prepareStatement("DELETE FROM roles WHERE role_id=?")){s.setLong(1,id);return s.executeUpdate()==1;}catch(SQLException e){throw fail(e);}}
+    public List<RolePermission> listAll(){return roles("SELECT * FROM roles ORDER BY role_id",0,false);} public List<RolePermission> findRolesByUserId(long user){return roles("SELECT r.* FROM roles r JOIN user_roles ur ON ur.role_id=r.role_id WHERE ur.user_id=?",user,true);}
+    private List<RolePermission> roles(String q,long id,boolean parameter){List<RolePermission> out=new ArrayList<>();try(Connection c=database.connection();PreparedStatement s=c.prepareStatement(q)){if(parameter)s.setLong(1,id);try(ResultSet r=s.executeQuery()){while(r.next())out.add(row(r));return out;}}catch(SQLException e){throw fail(e);}}
+    public boolean assignRoleToUser(long user,long role){try(Connection c=database.connection();PreparedStatement s=c.prepareStatement("INSERT OR IGNORE INTO user_roles(user_id,role_id) VALUES(?,?)")){s.setLong(1,user);s.setLong(2,role);return s.executeUpdate()==1;}catch(SQLException e){throw fail(e);}}
+    public boolean removeRoleFromUser(long user,long role){try(Connection c=database.connection();PreparedStatement s=c.prepareStatement("DELETE FROM user_roles WHERE user_id=? AND role_id=?")){s.setLong(1,user);s.setLong(2,role);return s.executeUpdate()==1;}catch(SQLException e){throw fail(e);}}
+    private void bind(PreparedStatement s,RolePermission r)throws SQLException{s.setString(1,r.getRoleName());s.setString(2,String.join("\u001F",r.getPermissionCodes()));s.setInt(3,r.isActive()?1:0);} private RolePermission row(ResultSet r)throws SQLException{String p=r.getString("permissions");Set<String> set=p.isEmpty()?Set.of():new HashSet<>(Arrays.asList(p.split("\u001F")));return new RolePermission(r.getLong("role_id"),r.getString("role_name"),set,r.getInt("active")!=0,r.getLong("version"));} private static IllegalStateException fail(SQLException e){return new IllegalStateException("Could not persist role",e);}
+}

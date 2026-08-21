@@ -1,0 +1,25 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:set var="variant" value="neutral" />
+<c:set var="statusText" value="${statusValue.toString()}" />
+<c:set var="label" value="${statusText}" />
+<c:choose>
+  <c:when test="${statusText == 'DRAFT'}"><c:set var="label" value="Draft" /></c:when>
+  <c:when test="${statusText == 'ISSUED'}"><c:set var="variant" value="info" /><c:set var="label" value="Issued" /></c:when>
+  <c:when test="${statusText == 'ON_HOLD'}"><c:set var="variant" value="warning" /><c:set var="label" value="On Hold" /></c:when>
+  <c:when test="${statusText == 'CANCELLED'}"><c:set var="variant" value="danger" /><c:set var="label" value="Cancelled" /></c:when>
+  <c:when test="${statusText == 'EXPIRED'}"><c:set var="variant" value="${statusKind eq 'inventory' ? 'danger' : 'warning'}" /><c:set var="label" value="Expired" /></c:when>
+  <c:when test="${statusText == 'PENDING'}"><c:set var="variant" value="${statusKind eq 'account' ? 'warning' : 'neutral'}" /><c:set var="label" value="Pending" /></c:when>
+  <c:when test="${statusText == 'PREPARING'}"><c:set var="variant" value="info" /><c:set var="label" value="Preparing" /></c:when>
+  <c:when test="${statusText == 'READY'}"><c:set var="variant" value="info" /><c:set var="label" value="Ready" /></c:when>
+  <c:when test="${statusText == 'DISPENSED'}"><c:set var="variant" value="success" /><c:set var="label" value="Dispensed" /></c:when>
+  <c:when test="${statusText == 'FAILED'}"><c:set var="variant" value="danger" /><c:set var="label" value="Failed" /></c:when>
+  <c:when test="${statusText == 'ACTIVE'}"><c:set var="variant" value="success" /><c:set var="label" value="Active" /></c:when>
+  <c:when test="${statusText == 'DISABLED'}"><c:set var="label" value="Disabled" /></c:when>
+  <c:when test="${statusText == 'LOCKED'}"><c:set var="variant" value="danger" /><c:set var="label" value="Locked" /></c:when>
+  <c:when test="${statusText == 'NORMAL'}"><c:set var="variant" value="success" /><c:set var="label" value="Normal" /></c:when>
+  <c:when test="${statusText == 'LOW'}"><c:set var="variant" value="warning" /><c:set var="label" value="Low" /></c:when>
+  <c:when test="${statusText == 'OUT'}"><c:set var="variant" value="danger" /><c:set var="label" value="Out" /></c:when>
+  <c:when test="${statusText == 'EXPIRING'}"><c:set var="variant" value="warning" /><c:set var="label" value="Expiring" /></c:when>
+  <c:when test="${statusText == 'INACTIVE'}"><c:set var="label" value="Inactive" /></c:when>
+</c:choose>
+<span class="status status-${variant}">${label}</span>

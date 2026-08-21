@@ -1,0 +1,583 @@
+# Implementation Plan: Pharmacy UI Implementation
+
+Convert the feature design into a series of prompts for a code-generation LLM that will implement each step with incremental progress. Make sure that each prompt builds on the previous prompts, and ends with wiring things together. There should be no hanging or orphaned code that isn't integrated into a previous step. Focus ONLY on tasks that involve writing, modifying, or testing code.
+
+## Overview
+
+The plan wires 32 JSP surfaces onto the existing fixed Java structure (`controller.*`, `view.*`, `model.*`, `storage.*`). The backend spec `pharmacy-inventory-prescription-system` owns every domain rule; this feature is a presentation-layer feature only. All tasks respect the FIXED_STRUCTURE constraints: no new `service`/`dto`/`repository`/`mapper`/`config`/`facade`/`usecase` packages, no new `@Controller` classes outside the six fixed controller packages, no scriptlets in JSP, no inline styles, and no stylesheet other than `pharmacare.css`.
+
+Foundation tasks come first (build wiring, design-system assets, shared fragments, session/CSRF/PRG conventions, common view helpers, progressive-enhancement JS modules). UCD surfaces follow in requirements.md order. Cross-cutting accessibility, responsive, static-analysis and property-based verification come last.
+
+## Tasks
+
+- [x] 1. Foundation: build wiring, view resolver, and design-system assets
+  - [x] 1.1 Configure Spring MVC view resolution and JSP dependencies
+    - Update `build.gradle` to include `spring-boot-starter-web`, `spring-boot-starter-security`, `jstl`, and `org.apache.tomcat.embed:tomcat-embed-jasper` as runtime dependencies
+    - Add `spring.mvc.view.prefix=/WEB-INF/jsp/` and `spring.mvc.view.suffix=.jsp` to `src/main/resources/application.properties`
+    - Confirm `Main.java` bootstraps Spring Boot with `@SpringBootApplication` and no additional `config` package is introduced
+    - _Requirements: 17.1, 17.3, 17.6_
+  - [x] 1.2 Place the PharmaCare stylesheet as a static asset
+    - Copy `.docs/pharmacare.css` byte-for-byte to `src/main/resources/static/css/pharmacare.css`
+    - Ensure no other `.css` file is served under `/static/`
+    - _Requirements: 2.1, 2.7, 2.8_
+  - [x] 1.3 Create the progressive-enhancement JavaScript module directory
+    - Create `src/main/resources/static/js/` and add empty module files: `app-shell.js`, `password-visibility.js`, `form-submit-lock.js`, `projected-balance.js`, `filter-clear.js`, `focus-first-invalid.js`
+    - Each module MUST no-op when its matching `data-*` selector is absent
+    - _Requirements: 13.6, 14.3_
+  - [x]* 1.4 Write CSS integrity test asserting stylesheet parity
+    - Write `PharmaCareStylesheetTest` that compares `src/main/resources/static/css/pharmacare.css` with `.docs/pharmacare.css` byte-for-byte and asserts only one `.css` file lives under `static/`
+    - _Requirements: 2.1, 2.7, 2.8_
+
+- [x] 2. Foundation: shared JSP fragments and view helper types
+  - [x] 2.1 Create `WEB-INF/jsp/fragments/head.jspf`
+    - Emit `<meta charset>`, viewport meta, `<title>${title}</title>`, one `<link rel="stylesheet" href="/static/css/pharmacare.css">`, and `<script defer src="/static/js/*.js">` tags for each progressive-enhancement module
+    - _Requirements: 2.1, 2.8_
+  - [x] 2.2 Create `WEB-INF/jsp/fragments/csrf.jspf`
+    - Emit `<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>` for inclusion inside every POST form
+    - _Requirements: 13.1_
+  - [x] 2.3 Create `WEB-INF/jsp/fragments/shell.jspf`, `sidebar.jspf`, and `topbar.jspf`
+    - `shell.jspf` renders `.app-shell` container, includes `sidebar.jspf` and `topbar.jspf`, and opens `<main class="main-panel">`
+    - `sidebar.jspf` iterates `${navItems}` emitting `.nav-item` links with `.nav-item.active` when `key == activeNavKey`; hides items absent from `navItems`
+    - `topbar.jspf` renders `.topbar` with `${breadcrumb}`, current-user label, `.role-badge`, and a POST form to `/logout` including `csrf.jspf`
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.7_
+  - [x] 2.4 Create `WEB-INF/jsp/fragments/flash.jspf` and `field-error.jspf`
+    - `flash.jspf` renders `.alert-success`/`.alert-warning`/`.alert-danger` from `${flash.type}` and `${flash.message}` when present
+    - `field-error.jspf` emits `<div id="${fieldId}-error" class="field-error">${message}</div>` for a single field
+    - _Requirements: 2.5, 13.5, 15.4_
+  - [x] 2.5 Create `WEB-INF/jsp/fragments/status-badge.jspf`
+    - Given `${statusKind}` and `${statusValue}` emit `<span class="status status-${variant}">${label}</span>` using the Clinical/Fulfilment/Account/Inventory vocabulary defined in design.md §Status Badge Contract
+    - _Requirements: 2.4, 15.3_
+  - [x] 2.6 Create `WEB-INF/jsp/fragments/pagination.jspf`
+    - Render numeric pagination when `${page.totalPages > 1}` using `.btn` and `.btn-secondary` variants; safe to include without pagination model
+    - _Requirements: 2.2_
+  - [x] 2.7 Add view-only helper records `NavItem` and `Flash` under `view/common/`
+    - `NavItem` (record) with fields `key`, `label`, `href`, `iconName`
+    - `Flash` (record) with fields `type`, `message`
+    - Both classes are presentation-only; no storage access, no domain-rule evaluation
+    - _Requirements: 17.4_
+  - [ ]* 2.8 Write unit tests for `status-badge.jspf` variant selection
+    - MockMvc renders a probe JSP that includes the fragment for every clinical, fulfilment, account, and inventory value; JSoup asserts exactly one `.status-*` variant class per badge
+    - _Requirements: 2.4, 15.3_
+
+- [x] 3. Foundation: session, CSRF, permission, and PRG conventions
+  - [x] 3.1 Add `NavigationController.navItemsFor(role)` inside `controller/common/`
+    - Return an ordered list of `NavItem` records per Operational_Role per design.md §Role-Filtered Navigation Model (Doctor, Patient, Pharmacist, Administrator mappings)
+    - Add a `@ControllerAdvice` in `controller.common` that injects `navItems`, `currentUser`, and `activeNavKey` into every model
+    - _Requirements: 1.2, 1.3, 1.4_
+  - [x] 3.2 Add a session-expiry servlet filter inside `controller/common/`
+    - Intercept every request; if path is protected and `SessionController.isExpired()` returns true, respond 302 to `/login?returnTo={urlEncode(originalPath)}`
+    - Exclude `/login`, `/password/recovery`, `/password/reset`, `/access-denied`, `/static/**`
+    - _Requirements: 1.5, 14.5_
+  - [x] 3.3 Add a `Cache-Control: no-store` filter for protected responses
+    - Same filter class as 3.2 or a sibling; apply `Cache-Control: no-store` to every non-static protected response so the browser back button cannot resurrect protected content
+    - _Requirements: 1.7_
+  - [x] 3.4 Add an access-denied `@ControllerAdvice` inside `controller/common/`
+    - Map the unchecked exception thrown by `SessionController.requirePermission(...)` to a forward to `AUTH-04` (`auth/access-denied.jsp`) populating `AccessDeniedView`
+    - Configure Spring Security to return HTTP 403 on missing/invalid CSRF token
+    - _Requirements: 1.6, 13.1, 17.8_
+  - [x] 3.5 Establish the PRG success-flash convention
+    - Document in a JavaDoc on `SessionController` (existing file) the required controller pattern: `redirectAttributes.addFlashAttribute("flash", new Flash("success", "..."))` followed by `return "redirect:...";`; every mutation controller MUST follow this shape
+    - _Requirements: 13.5_
+  - [ ]* 3.6 Write MockMvc tests for session/CSRF/permission wiring
+    - Unauthenticated GET to `/doctor/prescriptions` returns 302 to `/login`
+    - Expired-session POST to any protected mutation returns 302 to `/login?returnTo=...`
+    - POST without CSRF returns 403
+    - Doctor GET to `/admin/users` forwards to AUTH-04
+    - _Requirements: 1.5, 1.6, 13.1, 14.5, 17.8_
+
+- [x] 4. UCD-04 Authentication (AUTH-01, AUTH-02, AUTH-03, AUTH-04)
+  - [x] 4.1 Wire `AuthenticateAuthoriseController` for AUTH-01 (Login)
+    - Add `GET /login` and `POST /login` handlers inside the existing `AuthenticateAuthoriseController`; bind to `LoginFormView` via `@ModelAttribute("form")`; on success establish session and 302 to role default route; on failure re-render with generic `.alert-danger`
+    - Handle `returnTo` query parameter on successful login (whitelist against protocol/host injection)
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 13.1, 14.5_
+  - [x] 4.2 Scaffold `WEB-INF/jsp/auth/login.jsp`
+    - Centred auth card (no `.app-shell`); include `head.jspf`; identifier field, password field with `data-password-toggle`, `.btn.btn-primary` Sign In, `Forgot Password` link to `/password/recovery`; `.alert-danger` region for generic failure; include `csrf.jspf` inside the form
+    - _Requirements: 3.1, 3.2, 3.3, 13.1, 15.5_
+  - [ ]* 4.3 Write MockMvc test for AUTH-01 rendering and behaviour
+    - Assert rendered HTML contains identifier, password, submit, forgot-password link, hidden CSRF input; empty submission preserves identifier and shows field errors; wrong-credential response contains only generic `.alert-danger`
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [x] 4.4 Wire `AuthenticateAuthoriseController` for AUTH-02 (Password Recovery)
+    - Add `GET /password/recovery` and `POST /password/recovery` handlers; reuse `LoginFormView` or bind the identity value as a request parameter; render generic non-enumerating `.alert` on any submission outcome
+    - _Requirements: 3.5, 13.1_
+  - [x] 4.5 Scaffold `WEB-INF/jsp/auth/password-recovery.jsp`
+    - Same auth-card layout as AUTH-01; single identity field; primary submit; back-to-login link; include `csrf.jspf`
+    - _Requirements: 3.5, 13.1_
+  - [ ]* 4.6 Write MockMvc test for AUTH-02 non-enumerating response
+    - Assert response body wording does not vary between existing and non-existing identity values submitted
+    - _Requirements: 3.5_
+  - [x] 4.7 Wire `AuthenticateAuthoriseController` for AUTH-03 (Reset Password)
+    - Add `GET /password/reset` and `POST /password/reset` handlers; use request parameters or a view-only helper under `view/security_user/ucd04_authenticate_authorise/components/`; validate min length 8 and confirmation match; on success redirect to `/login`
+    - _Requirements: 3.6, 3.7, 13.1, 15.4_
+  - [x] 4.8 Scaffold `WEB-INF/jsp/auth/reset-password.jsp`
+    - Two password fields each with `data-password-toggle`; policy hint text; `.field-error` on length/mismatch; include `csrf.jspf`
+    - _Requirements: 3.6, 3.7, 15.4_
+  - [ ]* 4.9 Write MockMvc test for AUTH-03 validation
+    - Length < 8 → re-render with `.field-error` on new-password; mismatch → re-render with `.field-error` on confirm; both invalid → both errors surface; sensitive fields cleared
+    - _Requirements: 3.7, 13.3, 15.4_
+  - [x] 4.10 Wire `AuthenticateAuthoriseController`/`NavigationController` for AUTH-04
+    - Add `GET /access-denied` handler populating `AccessDeniedView`; ensure `@ControllerAdvice` (3.4) forwards to this view for permission failures
+    - _Requirements: 1.6, 3.8_
+  - [x] 4.11 Scaffold `WEB-INF/jsp/auth/access-denied.jsp`
+    - Minimal authenticated shell (or standalone if session invalid); centred `.card` with heading, safe description, "Home" link to role default route, "Back" link; no editable controls
+    - _Requirements: 1.6, 3.8_
+  - [ ]* 4.12 Write MockMvc test for AUTH-04 forward from unauthorised route
+    - Patient session requesting `/admin/users` forwards to `auth/access-denied` template and response body contains no admin data
+    - _Requirements: 1.6, 3.8, 5.8_
+  - [x] 4.13 Checkpoint — ensure authentication surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 5. UCD-05 My Profile (PROF-01, PROF-02, PROF-03, PROF-04)
+  - [x] 5.1 Wire `ManageProfileController` for PROF-01 (My Profile)
+    - Add `GET /profile` handler populating `ProfileDetailsView` from `ProfileStorage.findById(session.userId)`; expose Read_Only_Field fields as text
+    - _Requirements: 4.1, 4.2, 17.2, 17.5_
+  - [x] 5.2 Scaffold `WEB-INF/jsp/profile/detail.jsp`
+    - Uses `shell.jspf`; identity header, contact/personal cards, role-specific card, three action links to `/profile/edit`, `/profile/password`, `/profile/preferences`
+    - _Requirements: 4.1, 4.2_
+  - [ ]* 5.3 Write MockMvc test for PROF-01 rendering
+    - Assert three navigation controls present; role/account fields rendered as text and not as inputs
+    - _Requirements: 4.1, 4.2_
+  - [x] 5.4 Wire `ManageProfileController` for PROF-02 (Edit Profile)
+    - Add `GET /profile/edit` and `POST /profile` handlers bound to `ProfileFormView`; validate through `UserProfile.validateProfileData()`; persist via `ProfileStorage.update(profile, expectedVersion)`; PRG on success with flash
+    - _Requirements: 4.3, 4.4, 4.5, 13.1, 13.2, 13.4, 13.5_
+  - [x] 5.5 Scaffold `WEB-INF/jsp/profile/edit.jsp`
+    - `.form-grid` layout; only editable fields; `.field-error` per input; `.sticky-actions` with Save/Cancel; hidden `expectedVersion`; `data-submit-lock` on form; include `csrf.jspf`
+    - _Requirements: 4.3, 4.4, 4.5, 13.1, 13.2, 13.3, 13.4_
+  - [ ]* 5.6 Write MockMvc test for PROF-02 PRG and version conflict
+    - Successful submission returns 302 with flash; invalid submission preserves non-password values and adds `autofocus` on first invalid; stale-version submission renders `.alert-warning` with "Reload latest"
+    - _Requirements: 4.5, 13.2, 13.3, 13.4, 13.5_
+  - [x] 5.7 Wire `AuthenticateAuthoriseController` for PROF-03 (Change Password)
+    - Add `GET /profile/password` and `POST /profile/password` handlers under the existing security controller; use a view-only `PasswordChangeView` under `view/security_user/ucd05_manage_profile/components/` if a typed backing object is preferred; validate min length 8 and match; hand off to `CredentialStorage`
+    - _Requirements: 4.6, 4.7, 13.1, 15.4, 17.1, 17.4_
+  - [x] 5.8 Scaffold `WEB-INF/jsp/profile/change-password.jsp`
+    - Three password fields each with `data-password-toggle`; policy hint; `.field-error`; include `csrf.jspf`
+    - _Requirements: 4.6, 4.7, 15.4_
+  - [ ]* 5.9 Write MockMvc test for PROF-03 validation and success
+    - Wrong current password → generic `.alert-danger`; mismatch → `.field-error` on confirm; length < 8 → `.field-error` on new; success 302 to `/profile` with flash
+    - _Requirements: 4.7, 13.2, 13.3, 13.5_
+  - [x] 5.10 Wire `ManageProfileController` for PROF-04 (Notification Preferences)
+    - Add `GET /profile/preferences` and `POST /profile/preferences` handlers bound to `ProfileFormView`; persist via `ProfileStorage.update(profile, expectedVersion)`
+    - _Requirements: 4.8, 13.1, 13.5_
+  - [x] 5.11 Scaffold `WEB-INF/jsp/profile/preferences.jsp`
+    - Settings list; each row a `<label>` + toggle; `.sticky-actions` with Save/Reset; include `csrf.jspf`
+    - _Requirements: 4.8, 15.1_
+  - [ ]* 5.12 Write MockMvc test for PROF-04 save + reset
+    - Save persists selected preferences via storage stub and returns 302 with flash; reset restores server-side values without POST
+    - _Requirements: 4.8_
+  - [x] 5.13 Checkpoint — ensure profile surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. UCD-06 User Account Administration (IAM-01, IAM-02, IAM-03, IAM-04)
+  - [x] 6.1 Wire `ManageUserAccountController` for IAM-01 (User Accounts list)
+    - Add `GET /admin/users` handler populating `UserAccountListView`; call `SessionController.requirePermission("MANAGE_USERS")`; support search, role filter, account-state filter, and Refresh
+    - _Requirements: 5.1, 5.2, 5.3, 14.1, 14.2, 17.8_
+  - [x] 6.2 Scaffold `WEB-INF/jsp/admin/users/list.jsp`
+    - Filter toolbar with `data-filter-clear` linked to the form; `.table-wrap` around `<table class="data-table">`; row action column linking to `/admin/users/{id}/edit`; Empty and Filtered_Empty variants (Clear Filters button); include `csrf.jspf` where required
+    - _Requirements: 5.1, 5.2, 5.3, 14.1, 14.2_
+  - [ ]* 6.3 Write MockMvc test for IAM-01 filter states
+    - Empty results with no filters → single "Add Account" primary control; Empty results with active filters → "Clear Filters" control present; non-Administrator receives AUTH-04
+    - _Requirements: 5.2, 5.3, 5.8, 14.1, 14.2_
+  - [x] 6.4 Wire `ManageUserAccountController` for IAM-02 (Create/Edit Account)
+    - Add `GET /admin/users/new`, `GET /admin/users/{id}/edit`, `POST /admin/users`, `POST /admin/users/{id}` handlers bound to `UserAccountFormView`; check duplicate username/email via `UserAccountStorage`; on Patient role expose an existing-Patient-record lookup section
+    - _Requirements: 5.4, 5.5, 5.6, 13.1, 13.4, 17.5_
+  - [x] 6.5 Scaffold `WEB-INF/jsp/admin/users/form.jsp`
+    - Identity + role fields; conditional Patient-link section; no raw password inputs; `.field-error` on duplicate; hidden `expectedVersion`; `.sticky-actions`; include `csrf.jspf`
+    - _Requirements: 5.4, 5.5, 5.6, 13.1, 13.2_
+  - [ ]* 6.6 Write MockMvc test for IAM-02 duplicate detection and Patient conditional
+    - Duplicate username → re-render with `.field-error`; Patient role selection reveals lookup section; non-Administrator receives AUTH-04
+    - _Requirements: 5.5, 5.6, 5.8_
+  - [x] 6.7 Wire `ManageUserAccountController` for IAM-03 (Role & Access)
+    - Add `GET /admin/users/{id}/access` and `POST /admin/users/{id}/roles` handlers bound to `UserAccountFormView`; enforce single Operational_Role selection through `RolePermissionStorage`
+    - _Requirements: 5.4, 13.1, 17.5, 17.8_
+  - [x] 6.8 Scaffold `WEB-INF/jsp/admin/users/access.jsp`
+    - Role selector; permission summary card; Patient-link context if applicable; `.sticky-actions`; include `csrf.jspf`
+    - _Requirements: 5.4_
+  - [ ]* 6.9 Write MockMvc test for IAM-03 single-role constraint
+    - Submitting an unknown or multi-role selection re-renders with `.field-error`; success 302 to `/admin/users`
+    - _Requirements: 5.4, 13.5_
+  - [x] 6.10 Wire `ManageUserAccountController` for IAM-04 (Disable/Enable/Unlock)
+    - Add `GET /admin/users/{id}/state`, `POST /admin/users/{id}/enable`, `POST /admin/users/{id}/disable`, `POST /admin/users/{id}/unlock` handlers; use view-only state-confirmation helper if needed under `view/security_user/ucd06_manage_user_account/components/`; enforce optimistic locking through `UserAccountStorage.update`
+    - _Requirements: 5.7, 13.1, 13.4, 17.4, 17.5_
+  - [x] 6.11 Scaffold `WEB-INF/jsp/admin/users/state.jsp`
+    - Critical_Confirmation page with account identity, current status, target status, optional reason field, Confirm/Cancel; include `csrf.jspf`
+    - _Requirements: 5.7, 13.1_
+  - [ ]* 6.12 Write MockMvc test for IAM-04 confirmation and stale version
+    - Success posts to correct endpoint and 302s with flash; stale version renders `.alert-warning` and "Reload latest"
+    - _Requirements: 5.7, 13.4_
+  - [x] 6.13 Checkpoint — ensure account admin surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. UCD-01 Manage Prescription (RX-01, RX-02, RX-03, RX-04)
+  - [x] 7.1 Wire `ManagePrescriptionController` for RX-01 (Prescription Workspace)
+    - Add `GET /doctor/prescriptions` handler populating `ManagePrescriptionView`; call `requirePermission("PRESCRIPTION_VIEW")`; support search, patient filter, clinical-status filter, date filter, and Refresh
+    - _Requirements: 6.1, 6.2, 14.1, 14.2, 17.8_
+  - [x] 7.2 Scaffold `WEB-INF/jsp/prescription/list.jsp`
+    - `.table-wrap` and `<table class="data-table">`; Clinical_Status column via `status-badge.jspf`; "Create Prescription" primary control; Empty vs Filtered_Empty variants
+    - _Requirements: 6.1, 6.2, 14.1, 14.2_
+  - [ ]* 7.3 Write MockMvc test for RX-01 Expired badge and filter states
+    - Prescription older than one calendar month renders `.status-warning` "Expired"; empty results with active filters expose "Clear Filters"
+    - _Requirements: 6.1, 6.2, 14.1, 14.2_
+  - [x] 7.4 Wire `ManagePrescriptionController` for RX-02 (Prescription Details)
+    - Add `GET /doctor/prescriptions/{id}` handler; populate `ManagePrescriptionView` with `PrescriptionItemView` list and read-only fulfilment summary; hide Edit/Change Status when status is CANCELLED or EXPIRED
+    - _Requirements: 6.3, 6.4, 17.5_
+  - [x] 7.5 Scaffold `WEB-INF/jsp/prescription/detail.jsp`
+    - Sticky record-identity header; medication items table; contextual fulfilment card; `.alert-warning` non-dismissable when status is CANCELLED/EXPIRED
+    - _Requirements: 6.3, 6.4_
+  - [ ]* 7.6 Write MockMvc test for RX-02 terminal-state control hiding
+    - Cancelled prescription renders no Edit control and no Change Status control; Issued prescription renders both controls
+    - _Requirements: 6.4_
+  - [x] 7.7 Wire `ManagePrescriptionController` for RX-03 (Create/Edit Prescription)
+    - Add `GET /doctor/prescriptions/new`, `GET /doctor/prescriptions/{id}/edit`, `POST /doctor/prescriptions`, `POST /doctor/prescriptions/{id}` handlers bound to `PrescriptionFormView` with nested `PrescriptionItemView` items; validate min 1 item, max 50 items, mandatory fields per item; persist through `PrescriptionStorage.update(prescription, expectedVersion)`
+    - _Requirements: 6.5, 6.6, 13.1, 13.2, 13.3, 13.4_
+  - [x] 7.8 Scaffold `WEB-INF/jsp/prescription/form.jsp`
+    - Patient selector; repeatable item rows with add/remove; `.sticky-actions` with Save/Cancel; hidden `expectedVersion`; `.field-error` per item; include `csrf.jspf`
+    - _Requirements: 6.5, 6.6, 13.1, 13.2_
+  - [ ]* 7.9 Write MockMvc test for RX-03 validation and version conflict
+    - Zero items → `.alert-danger` summary + item-count field error; 51 items → count-rule error; missing medicine on item 2 → `.field-error` on that row; stale version renders `.alert-warning` and preserves entered items
+    - _Requirements: 6.6, 13.2, 13.3, 13.4_
+  - [x] 7.10 Wire `ManagePrescriptionController` for RX-04 (Cancel Prescription)
+    - Add `GET /doctor/prescriptions/{id}/cancel` and `POST /doctor/prescriptions/{id}/cancel` handlers; use view-only helper under `view/clinical_prescription/ucd01_manage_prescription/components/` if needed; enforce `canBeCancelled()` domain check
+    - _Requirements: 6.7, 13.1, 13.4, 17.4_
+  - [x] 7.11 Scaffold `WEB-INF/jsp/prescription/cancel.jsp`
+    - Critical_Confirmation page with prescription identity, patient name, current status, reason input, destructive Confirm control; include `csrf.jspf`
+    - _Requirements: 6.7, 13.1_
+  - [ ]* 7.12 Write MockMvc test for RX-04 destructive confirmation
+    - Successful confirm 302s to RX-02 with flash; missing reason (when required) renders `.field-error`; already-cancelled prescription renders `.alert-warning`
+    - _Requirements: 6.7, 13.4, 13.5_
+  - [x] 7.13 Checkpoint — ensure prescription surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. UCD-07 Update Prescription Status (PST-01, PST-02)
+  - [x] 8.1 Wire `UpdatePrescriptionStatusController` for PST-01 (Clinical Status Management)
+    - Add `GET /doctor/prescriptions/{id}/status` handler populating `UpdatePrescriptionStatusView` with allowed transitions and issue/expiry summary; call `requirePermission("PRESCRIPTION_STATUS_UPDATE")`
+    - _Requirements: 7.1, 7.2, 17.8_
+  - [x] 8.2 Scaffold `WEB-INF/jsp/prescription-status/manage.jsp`
+    - Current-status badge; issue/expiry card; one `.btn` per allowed transition; `.alert-warning` when no transitions permitted
+    - _Requirements: 7.1, 7.2_
+  - [ ]* 8.3 Write MockMvc test for PST-01 empty-transitions state
+    - Cancelled prescription renders zero transition buttons and the "no transitions permitted" alert
+    - _Requirements: 7.2_
+  - [x] 8.4 Wire `UpdatePrescriptionStatusController` for PST-02 (Status Transition)
+    - Add `GET /doctor/prescriptions/{id}/status/change` and `POST /doctor/prescriptions/{id}/status` handlers bound to `PrescriptionStatusFormView`; require reason when target status requires one; revalidate current status + `expectedVersion` before persist; ON_HOLD requires Doctor
+    - _Requirements: 7.3, 7.4, 7.5, 7.6, 13.1, 13.4, 17.8_
+  - [x] 8.5 Scaffold `WEB-INF/jsp/prescription-status/transition.jsp`
+    - Critical_Confirmation with current-status badge, target-status badge, reason input, `.alert-danger` + "Reload latest" on conflict; include `csrf.jspf`
+    - _Requirements: 7.3, 7.4, 7.6, 13.1_
+  - [ ]* 8.6 Write MockMvc test for PST-02 permission, reason, and version conflict
+    - Non-Doctor attempting ON_HOLD forwards to AUTH-04; empty reason for reason-required target renders `.field-error`; version conflict renders `.alert-danger` and "Reload latest"
+    - _Requirements: 7.4, 7.5, 7.6_
+  - [x] 8.7 Checkpoint — ensure clinical-status surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 9. UCD-02 View Prescription Status (PTR-01, PTR-02)
+  - [x] 9.1 Wire `ViewPrescriptionStatusController` for PTR-01 (My Prescriptions)
+    - Add `GET /patient/prescriptions` handler populating `ViewPrescriptionStatusView` from `PrescriptionStorage`+`DispenseStorage`; enforce `session.role == PATIENT` and filter to `patientId == session.userId`; exclude DRAFT
+    - _Requirements: 8.1, 8.2, 17.5, 17.8_
+  - [x] 9.2 Scaffold `WEB-INF/jsp/patient/prescriptions.jsp`
+    - `.data-table` with dual Clinical_Status and Fulfilment_Status columns via `status-badge.jspf`; no create/edit controls
+    - _Requirements: 8.1, 8.2_
+  - [ ]* 9.3 Write MockMvc test for PTR-01 Draft exclusion and read-only
+    - Patient with mixed statuses sees no DRAFT rows; page contains no Edit/Cancel/Dispense controls
+    - _Requirements: 8.2_
+  - [x] 9.4 Wire `ViewPrescriptionStatusController` for PTR-02 (Prescription Status Details)
+    - Add `GET /patient/prescriptions/{id}` handler populating `PrescriptionStatusDetailsView`; verify ownership (`prescription.patientId == session.userId`) before rendering; render Not_Found variant otherwise
+    - _Requirements: 8.3, 8.4, 8.5, 17.8_
+  - [x] 9.5 Scaffold `WEB-INF/jsp/patient/prescription-detail.jsp`
+    - Read-only medication instructions; Clinical + Fulfilment timeline; `.alert-warning` when status is EXPIRED or CANCELLED; no edit affordances
+    - _Requirements: 8.3, 8.5_
+  - [ ]* 9.6 Write MockMvc test for PTR-02 ownership isolation
+    - Patient requesting another patient's prescription id renders Not_Found variant and response body contains no owner data
+    - _Requirements: 8.4_
+  - [x] 9.7 Checkpoint — ensure patient tracking surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 10. UCD-03 Notifications (NOT-01, NOT-02)
+  - [x] 10.1 Wire `SendAlertsNotificationsController` for NOT-01 (Notification Centre)
+    - Add `GET /patient/notifications` handler populating `SendAlertsNotificationsView` from `NotificationStorage` filtered to `session.userId`; add `POST /patient/notifications/{id}/read` handler with PRG
+    - _Requirements: 9.1, 9.2, 13.1, 13.5, 17.8_
+  - [x] 10.2 Scaffold `WEB-INF/jsp/notifications/list.jsp`
+    - Chronological list with unread emphasis (bolder weight + dot indicator); failed-delivery notifications show `.status-danger` label; include `csrf.jspf` inside each mark-read form
+    - _Requirements: 9.1, 9.2, 13.1_
+  - [ ]* 10.3 Write MockMvc test for NOT-01 read/unread and failure indicator
+    - Unread rows carry the emphasis marker; failed-delivery rows carry `.status-danger`; failed notifications remain visible
+    - _Requirements: 9.1, 9.2_
+  - [x] 10.4 Wire `SendAlertsNotificationsController` for NOT-02 (Notification Detail)
+    - Add `GET /patient/notifications/{id}` and `POST /patient/notifications/{id}/read` handlers; ownership check; expose related-prescription link when prescription is visible to the Patient
+    - _Requirements: 9.3, 9.4, 9.5, 17.8_
+  - [x] 10.5 Scaffold `WEB-INF/jsp/notifications/detail.jsp`
+    - Full title/message/event type/metadata; related-prescription link when applicable; include `csrf.jspf`
+    - _Requirements: 9.3, 9.4_
+  - [ ]* 10.6 Write MockMvc test for NOT-02 ownership and related-prescription link
+    - Patient requesting another patient's notification renders Not_Found; owner's response contains link to `/patient/prescriptions/{prescriptionId}`
+    - _Requirements: 9.4, 9.5_
+  - [x] 10.7 Checkpoint — ensure notification surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 11. UCD-08 Dispense Medication (DISP-01, DISP-02, DISP-03)
+  - [x] 11.1 Wire `DispenseMedicationController` for DISP-01 (Dispensing Queue)
+    - Add `GET /pharmacy/dispensing` and `GET /pharmacy/dispensing/prescription/{id}` handlers populating `DispenseMedicationView`; call `requirePermission("DISPENSE_MEDICATION")`; render block reasons for Cancelled/Expired/Dispensed
+    - _Requirements: 10.1, 10.2, 17.8_
+  - [x] 11.2 Scaffold `WEB-INF/jsp/dispensing/queue.jsp`
+    - `.data-table` with clinical eligibility, Fulfilment_Status, block reason column; row action "Dispense" hidden when row is non-actionable
+    - _Requirements: 10.1, 10.2_
+  - [ ]* 11.3 Write MockMvc test for DISP-01 blocked-row action absence
+    - Cancelled/Expired/Dispensed rows carry no "Dispense" control and expose a Status_Badge with block reason
+    - _Requirements: 10.2_
+  - [x] 11.4 Wire `DispenseMedicationController` for DISP-02 (Verification & Dispensing)
+    - Add `GET /pharmacy/dispensing/{dispenseId}/verify` and `POST /pharmacy/dispensing/{dispenseId}/confirm` handlers bound to `DispenseFormView`; compute FEFO allocation preview and Insufficient_Stock flag from `InventoryStorage`+`PrescriptionStorage`; disable Confirm when insufficient
+    - _Requirements: 10.3, 10.4, 10.5, 10.6, 13.1, 13.4_
+  - [x] 11.5 Scaffold `WEB-INF/jsp/dispensing/verify.jsp`
+    - Stepper (Verify Patient → Verify Medication → Check Stock → Confirm Handover); sticky transaction summary; `.alert-danger` "Insufficient Stock"; Confirm control with `disabled` when insufficient; no editable quantity input; include `csrf.jspf`
+    - _Requirements: 10.3, 10.4, 10.5, 13.1_
+  - [ ]* 11.6 Write MockMvc test for DISP-02 sufficiency and full-quantity constraint
+    - Insufficient allocation renders `.alert-danger` and disabled Confirm; no `<input type="number">` for prescribed quantity exists on the page
+    - _Requirements: 10.4, 10.5_
+  - [x] 11.7 Wire `DispenseMedicationController` for DISP-03 (Dispensing Result)
+    - Add `GET /pharmacy/dispensing/{dispenseId}/result` handler populating `DispenseResultView` from persisted `DispenseRecord`; success page never rendered for uncommitted attempts
+    - _Requirements: 10.7, 10.8, 17.5_
+  - [x] 11.8 Scaffold `WEB-INF/jsp/dispensing/result.jsp`
+    - `.alert-success` outcome banner with DispenseRecord ID, patient, quantities, timestamp, batch summary; failure variant uses `.alert-danger` and "Back to Verification" link
+    - _Requirements: 10.7, 10.8_
+  - [ ]* 11.9 Write MockMvc test for DISP-03 success vs failure semantics
+    - Success renders `.alert-success` + "Back to Queue"; failure renders `.alert-danger` + "Back to Verification" with no success language
+    - _Requirements: 10.7, 10.8_
+  - [x] 11.10 Checkpoint — ensure dispensing surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 12. UCD-10 Medicine Inventory (INV-01, INV-02, INV-03, INV-04)
+  - [x] 12.1 Wire `ManageMedicineInventoryController` for INV-01 (Inventory List)
+    - Add `GET /pharmacy/inventory` handler populating `MedicineListView` from `MedicineStorage`+`InventoryStorage`; expose dispensable stock excluding expired batches; support search/filter
+    - _Requirements: 11.1, 11.2, 14.1, 14.2, 17.5_
+  - [x] 12.2 Scaffold `WEB-INF/jsp/inventory/list.jsp`
+    - `.data-table` with Medicine, formulation, Dispensable Stock, nearest expiry, status badges; "Add Medicine" primary control; Empty vs Filtered_Empty variants
+    - _Requirements: 11.1, 11.2, 14.1, 14.2_
+  - [ ]* 12.3 Write MockMvc test for INV-01 low-stock badge
+    - Medicine with dispensable ≤ reorder level renders `.status-warning` "Low"; medicine with 0 dispensable renders `.status-danger` "Out"
+    - _Requirements: 11.2_
+  - [x] 12.4 Wire `ManageMedicineInventoryController` for INV-02 (Medicine/Batch Details)
+    - Add `GET /pharmacy/inventory/{medicineId}` handler populating `MedicineListView` (detail) with batch list + movement history; expired batches excluded from aggregate dispensable
+    - _Requirements: 11.3, 11.4_
+  - [x] 12.5 Scaffold `WEB-INF/jsp/inventory/detail.jsp`
+    - Medicine summary; batch `.data-table` with eligibility column; movement-history section using `status-badge.jspf`; command bar links to `/pharmacy/inventory/{id}/edit` and `/pharmacy/inventory/{id}/stock`
+    - _Requirements: 11.3, 11.4_
+  - [ ]* 12.6 Write MockMvc test for INV-02 expired batch handling
+    - Expired batch row carries `.status-danger` "Expired" and is excluded from the aggregate dispensable figure displayed at the top
+    - _Requirements: 11.4_
+  - [x] 12.7 Wire `ManageMedicineInventoryController` for INV-03 (Add/Edit Medicine)
+    - Add `GET /pharmacy/inventory/new`, `GET /pharmacy/inventory/{id}/edit`, `POST /pharmacy/inventory/medicine`, `POST /pharmacy/inventory/{id}/medicine` handlers bound to `MedicineFormView`; no stock quantity input
+    - _Requirements: 11.1, 13.1, 13.2, 13.4_
+  - [x] 12.8 Scaffold `WEB-INF/jsp/inventory/form.jsp`
+    - `.form-grid` for code/name/generic/form/strength/unit/description/active; `.sticky-actions`; hidden `expectedVersion`; `.field-error` on duplicate; include `csrf.jspf`
+    - _Requirements: 11.1, 13.1, 13.2_
+  - [ ]* 12.9 Write MockMvc test for INV-03 duplicate detection and no stock input
+    - Duplicate medicine code renders `.field-error`; page contains no quantity input; version conflict renders `.alert-warning` and "Reload latest"
+    - _Requirements: 11.1, 13.2, 13.4_
+  - [x] 12.10 Wire `ManageMedicineInventoryController` for INV-04 (Receive/Adjust Stock)
+    - Add `GET /pharmacy/inventory/{id}/stock`, `POST /pharmacy/inventory/{id}/receive`, `POST /pharmacy/inventory/{inventoryId}/adjust` handlers bound to `StockAdjustmentView`; validate mandatory reason on Adjust; reject negative-balance results before invoking `InventoryStorage.adjustStock`
+    - _Requirements: 11.5, 11.6, 11.7, 11.8, 13.1, 13.4_
+  - [x] 12.11 Scaffold `WEB-INF/jsp/inventory/stock-action.jsp`
+    - Operation-type selector (Receive/Adjust); batch selector for Adjust; batch-number + expiry for Receive; reason textarea (mandatory on Adjust); `data-projected-balance` element showing current + projected balance; `.alert-danger` on negative-balance; include `csrf.jspf`
+    - _Requirements: 11.5, 11.6, 11.7, 11.8, 13.1_
+  - [ ]* 12.12 Write MockMvc test for INV-04 reason and negative-balance rules
+    - Whitespace-only reason on Adjust renders `.field-error` and does not invoke storage; projected balance < 0 renders `.alert-danger` and does not invoke storage
+    - _Requirements: 11.6, 11.7_
+  - [x] 12.13 Checkpoint — ensure inventory surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 13. UCD-09 Reports (REP-01, REP-02, REP-03)
+  - [x] 13.1 Wire `GenerateReportsController` for REP-01 (Reports Home / Saved Reports)
+    - Add `GET /admin/reports` handler populating `GenerateReportsView`; call `requirePermission("GENERATE_REPORTS")`; add a list/query method to `ReportStorage.java` for saved reports (extending the existing file, not a new class)
+    - _Requirements: 12.1, 12.7, 17.1, 17.5, 17.8_
+  - [x] 13.2 Scaffold `WEB-INF/jsp/reports/list.jsp`
+    - Four report-type command cards linking to `/admin/reports/new`; `.data-table` of saved reports with Open + Export PDF row actions
+    - _Requirements: 12.1_
+  - [ ]* 13.3 Write MockMvc test for REP-01 report-type cards and saved list
+    - Four command cards exist; saved-report table renders row count, generated-by, generated-at; non-Administrator receives AUTH-04
+    - _Requirements: 12.1, 12.7_
+  - [x] 13.4 Wire `GenerateReportsController` for REP-02 (Report Criteria)
+    - Add `GET /admin/reports/new` and `POST /admin/reports/generate` handlers bound to `ReportCriteriaView`; validate start-date ≤ end-date; on success persist an empty or populated `Report` snapshot and 302 to REP-03
+    - _Requirements: 12.2, 12.3, 12.4, 13.1, 13.5_
+  - [x] 13.5 Scaffold `WEB-INF/jsp/reports/criteria.jsp`
+    - Report-type selector; start/end date inputs; type-specific filter groups; criteria summary; Generate primary control; `.field-error` on inverted date range; include `csrf.jspf`
+    - _Requirements: 12.2, 12.3, 13.1_
+  - [ ]* 13.6 Write MockMvc test for REP-02 date validation and empty-result persistence
+    - end < start renders `.field-error` and does not invoke storage; empty-result generation persists a snapshot and 302s to REP-03
+    - _Requirements: 12.3, 12.4_
+  - [x] 13.7 Wire `GenerateReportsController` for REP-03 (Report Snapshot)
+    - Add `GET /admin/reports/{reportId}` and `GET /admin/reports/{reportId}/export` handlers populating `ReportResultView` from persisted snapshot only (never recalculate live)
+    - _Requirements: 12.5, 12.6, 12.7, 17.5, 17.7_
+  - [x] 13.8 Scaffold `WEB-INF/jsp/reports/result.jsp`
+    - Snapshot title, criteria, generatedAt, rowCount; `.data-table` for detail; Empty_State when rowCount is zero (preserves Export PDF); Export PDF link
+    - _Requirements: 12.5, 12.6_
+  - [ ]* 13.9 Write MockMvc test for REP-03 snapshot fidelity
+    - Empty snapshot renders Empty_State and Export PDF is present; non-Administrator receives AUTH-04
+    - _Requirements: 12.6, 12.7_
+  - [x] 13.10 Checkpoint — ensure reporting surfaces render and tests pass
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 14. Accessibility verification
+  - [ ]* 14.1 Write MockMvc + JSoup accessibility test for form labelling
+    - For every form JSP, assert every input has a paired `<label for="X">` and `.field-error` elements are referenced by `aria-describedby`
+    - _Requirements: 15.1, 15.4_
+  - [ ]* 14.2 Write MockMvc + JSoup accessibility test for table semantics
+    - For every list JSP, assert every `<table class="data-table">` sits inside `.table-wrap`, sets `<caption>` or `aria-label`, and every column header is `<th scope="col">`
+    - _Requirements: 15.2_
+  - [ ]* 14.3 Write MockMvc + JSoup accessibility test for status semantics
+    - Every `.status` element carries non-empty text content that belongs to the Clinical/Fulfilment/Account/Inventory vocabulary defined in design.md §Status Badge Contract
+    - _Requirements: 2.4, 15.3_
+  - [x]* 14.4 Write JSP source-scan accessibility test for focus visibility
+    - Walk every `*.jsp`/`*.jspf` and assert no `style="..."` contains `outline`; assert `pharmacare.css` `:focus-visible` rule is intact
+    - _Requirements: 2.8, 15.5_
+  - [ ]* 14.5 Write MockMvc + JSoup semantic source-order test
+    - Every rendered page's landmark order is `nav.sidebar → header.topbar → main > h1 → primary region → secondary region`
+    - _Requirements: 15.7_
+
+- [ ] 15. Responsive desktop-width behaviour verification
+  - [ ]* 15.1 Write JSP source-scan test for grid usage
+    - Every form JSP uses `.form-grid`; no inline `style="grid-column:..."`; no page-scoped CSS defines media queries beyond `pharmacare.css`
+    - _Requirements: 16.4, 16.5_
+  - [ ]* 15.2 Write JSP source-scan test for `.table-wrap` presence
+    - Every `<table class="data-table">` sits inside `.table-wrap`; ensures the ≤1100 px stylesheet rules take effect
+    - _Requirements: 16.3, 2.3_
+
+- [ ] 16. Static analysis: architecture rules and JSP hygiene
+  - [x]* 16.1 Write ArchUnit `NoForbiddenPackagesTest`
+    - Assert no class resides under `..service..`, `..dto..`, `..repository..`, `..mapper..`, `..config..`, `..facade..`, or `..usecase..` inside `pharmacy_system`
+    - _Requirements: 17.3_
+  - [x]* 16.2 Write ArchUnit `FixedControllerPackagesTest`
+    - Assert every `@Controller`/`@RestController` class resides in one of `controller.security_user`, `controller.clinical_prescription`, `controller.patient_information`, `controller.pharmacy_operations`, `controller.management_dss`, `controller.common`
+    - _Requirements: 17.1_
+  - [ ]* 16.3 Write ArchUnit `ViewClassLocationTest`
+    - Assert every Boundary_View_Class resides under `view.<domain>.ucdNN_<name>` or `view.<domain>.ucdNN_<name>.components`
+    - _Requirements: 17.4_
+  - [ ]* 16.4 Write ArchUnit `StorageBoundaryTest`
+    - Assert JSPs and Boundary_View_Classes do not import from `storage.*`
+    - _Requirements: 17.5, 17.7_
+  - [ ]* 16.5 Write JSP source-scan `JspHygieneTest`
+    - Walk `WEB-INF/jsp/**/*.jsp` and `*.jspf`; assert no `<%` or `%>` scriptlet delimiters; assert no domain-method identifiers (`isExpired`, `canTransitionTo`, `planFefoAllocation`, `hasPermission`, `findByX`, `update`, `save`, `deduct`, `adjust`, `requirePermission`) appear in files
+    - _Requirements: 17.7_
+  - [ ]* 16.6 Write JSP source-scan `CsrfCoverageTest`
+    - Assert every `<form method="post">` in every JSP includes `csrf.jspf`
+    - _Requirements: 13.1_
+  - [x]* 16.7 Write JSP source-scan `InlineStyleTest`
+    - Assert no `style="..."` attribute contains any of `color`, `background`, `background-color`, `border`, `border-*`, `border-radius`, `box-shadow`, `font-family`
+    - _Requirements: 2.8_
+
+- [ ] 17. Property-Based Tests (Property 1..20)
+  - [ ]* 17.1 Write property test for Role-Filtered Navigation Invariant
+    - **Property 1: Role-Filtered Navigation Invariant**
+    - **Validates: Requirements 1.2, 1.3**
+    - jqwik generates (role, permitted-route) pairs; MockMvc requests the route; JSoup asserts rendered `.nav-item` href set equals permitted-route set for that role and exactly one `.nav-item.active` whose href matches
+  - [ ]* 17.2 Write property test for Protected-Route Access Control
+    - **Property 2: Protected-Route Access Control**
+    - **Validates: Requirements 1.5, 1.6, 3.8, 5.8, 6.8, 7.5, 8.4, 9.5, 12.7**
+    - jqwik generates arbitrary protected paths and (role, path) pairs; asserts 302→`/login` for unauthenticated and AUTH-04 forward for unpermitted
+  - [ ]* 17.3 Write property test for Design System Exclusivity
+    - **Property 3: Design System Exclusivity**
+    - **Validates: Requirements 2.2, 2.3, 2.4, 2.5**
+    - MockMvc requests every JSP surface with a valid session; JSoup asserts `.btn` + exactly one variant per button, `.data-table` inside `.table-wrap`, `.status` + exactly one variant, `.alert` + exactly one variant
+  - [ ]* 17.4 Write property test for No Inline Style Overrides
+    - **Property 4: No Inline Style Overrides**
+    - **Validates: Requirement 2.8**
+    - Two layers: JSP source scan for `style="..."` and MockMvc+JSoup scan of every rendered page
+  - [ ]* 17.5 Write property test for Draft Prescription Invisibility to Patient
+    - **Property 5: Draft Prescription Invisibility to Patient**
+    - **Validates: Requirement 8.2**
+    - jqwik generates Patient with mixed-status prescription set; asserts rendered PTR-01 IDs never intersect DRAFT-status IDs
+  - [ ]* 17.6 Write property test for Patient Prescription Isolation
+    - **Property 6: Patient Prescription Isolation**
+    - **Validates: Requirement 8.4**
+    - jqwik generates (session-patient, prescription-patient) with mismatch; asserts Not_Found variant and response body excludes prescription fields
+  - [ ]* 17.7 Write property test for Terminal-State Control Absence
+    - **Property 7: Cancel and Edit Controls Absent on Terminal States**
+    - **Validates: Requirement 6.4**
+    - jqwik generates prescriptions across all Clinical_Status values; asserts Edit and Change Status controls absent when status ∈ {CANCELLED, EXPIRED}
+  - [ ]* 17.8 Write property test for Full-Quantity Dispensing UI Constraint
+    - **Property 8: Full-Quantity Dispensing UI Constraint**
+    - **Validates: Requirements 10.4, 10.5**
+    - jqwik generates (prescription, inventory) pairs; asserts no `<input type="number">` for prescribed quantity and Confirm disabled iff insufficient
+  - [ ]* 17.9 Write property test for PRG Pattern After Successful Mutation
+    - **Property 9: PRG Pattern After Successful Mutation**
+    - **Validates: Requirements 4.5, 10.6, 12.4, 13.5**
+    - jqwik generates valid form submissions across every POST endpoint; asserts 302 + `Location` header targets a GET and body is empty
+  - [ ]* 17.10 Write property test for Adjustment Reason Required in UI
+    - **Property 10: Adjustment Reason Required in UI**
+    - **Validates: Requirement 11.6**
+    - jqwik generates whitespace-only reasons; asserts `.field-error` on reason and mock `InventoryStorage.adjustStock` receives zero invocations
+  - [ ]* 17.11 Write property test for Negative-Balance Prevention in UI
+    - **Property 11: Negative-Balance Prevention in UI**
+    - **Validates: Requirement 11.7**
+    - jqwik generates (current, delta) pairs with `current + delta < 0`; asserts `.alert-danger` and mock storage un-invoked
+  - [ ]* 17.12 Write property test for Session Expiry Redirect Preservation
+    - **Property 12: Session Expiry Redirect Preservation**
+    - **Validates: Requirement 14.5**
+    - jqwik generates arbitrary protected mutation paths; MockMvc submits with expired session; asserts 302 to `/login?returnTo={urlEncode(path)}` and mock storage un-invoked
+  - [ ]* 17.13 Write property test for CSRF Token on Every Mutating Form
+    - **Property 13: CSRF Token on Every Mutating Form**
+    - **Validates: Requirement 13.1**
+    - (a) MockMvc walks every GET rendering a POST form; JSoup asserts a hidden CSRF input exists. (b) MockMvc posts every mutation endpoint with CSRF stripped; asserts 403
+  - [ ]* 17.14 Write property test for Empty vs Filtered-Empty Distinguishability
+    - **Property 14: Empty vs Filtered-Empty Distinguishability**
+    - **Validates: Requirements 5.2, 5.3, 14.1, 14.2**
+    - jqwik generates (list-route, filter-state) pairs including empty backing data; asserts "Clear Filters" present iff active filters exist
+  - [ ]* 17.15 Write property test for Status Semantic Text Presence
+    - **Property 15: Status Semantic Text Presence**
+    - **Validates: Requirements 2.4, 15.3**
+    - MockMvc requests every JSP where status badges can appear; JSoup extracts every `.status` element; asserts text ∈ Clinical/Fulfilment/Account/Inventory vocabulary
+  - [ ]* 17.16 Write property test for Focus Visibility Invariant
+    - **Property 16: Focus Visibility Invariant**
+    - **Validates: Requirement 15.5**
+    - (a) CSS source scan confirms `:focus-visible` rule intact; (b) MockMvc + JSoup asserts no element carries an inline `style` containing `outline`
+  - [x]* 17.17 Write property test for Fixed Controller Route Ownership
+    - **Property 17: Fixed Controller Route Ownership**
+    - **Validates: Requirement 17.1**
+    - ArchUnit rule: classes annotated `@Controller`/`@RestController` reside in the six fixed controller packages
+  - [x]* 17.18 Write property test for No Forbidden Java Layers
+    - **Property 18: No Forbidden Java Layers**
+    - **Validates: Requirement 17.3**
+    - ArchUnit `noClasses().should().resideInAnyPackage("..service..", "..dto..", "..repository..", "..mapper..", "..config..", "..facade..", "..usecase..")`
+  - [ ]* 17.19 Write property test for JSP Business-Logic Absence
+    - **Property 19: JSP Business-Logic Absence**
+    - **Validates: Requirement 17.7**
+    - Walk every `*.jsp`/`*.jspf` under `WEB-INF/jsp/`; assert no `<% %>` scriptlets and no domain-method identifiers appear
+  - [ ]* 17.20 Write property test for Semantic Source Order Invariance
+    - **Property 20: Semantic Source Order Invariance**
+    - **Validates: Requirement 15.7**
+    - MockMvc + JSoup extracts landmark order (`nav.sidebar`, `header.topbar`, `main > h1`, primary card, secondary card); asserts fixed sequence
+
+- [x] 18. Final integration verification
+  - [x] 18.1 Run the full test suite and static analysis
+    - Execute `./gradlew clean build`; ensure all unit, integration, ArchUnit, JSP-hygiene, and property-based tests pass
+    - Confirm no `service`, `dto`, `repository`, `mapper`, `config`, `facade`, or `usecase` package exists under `src/main/java/pharmacy_system/`
+    - _Requirements: 17.1, 17.3, 17.4, 17.5, 17.6, 17.7_
+  - [x] 18.2 Final checkpoint — ensure all tests pass and structure is intact
+    - Ensure all tests pass, ask the user if questions arise.
+
+## Notes
+
+- Tasks marked with `*` are optional and can be skipped for faster MVP.
+- Each task references specific requirements for traceability.
+- Checkpoints (4.13, 5.13, 6.13, 7.13, 8.7, 9.7, 10.7, 11.10, 12.13, 13.10, 18.2) ensure incremental validation across UCD groups.
+- Property tests validate universal correctness properties from requirements.md (Property 1..20).
+- Unit / MockMvc tests validate specific examples and edge cases per surface.
+- Every JSP surface has three sub-tasks: controller wiring, JSP scaffolding, and MockMvc test.
+- Foundation tasks 1–3 unblock every UCD group; UCD groups 4–13 are largely independent and can proceed in parallel once foundations and cross-cutting fragments exist.
+- No new Java packages beyond the fixed structure are introduced.
+
+## Task Dependency Graph
+
+```json
+{
+  "waves": [
+    { "id": 0, "tasks": ["1.1", "1.2", "1.3"] },
+    { "id": 1, "tasks": ["1.4", "2.1", "2.2", "2.7"] },
+    { "id": 2, "tasks": ["2.3", "2.4", "2.5", "2.6", "3.1"] },
+    { "id": 3, "tasks": ["2.8", "3.2", "3.3", "3.4", "3.5"] },
+    { "id": 4, "tasks": ["3.6", "4.1", "4.4", "4.7", "4.10", "5.1", "5.4", "5.7", "5.10", "6.1", "6.4", "6.7", "6.10", "7.1", "7.4", "7.7", "7.10", "8.1", "8.4", "9.1", "9.4", "10.1", "10.4", "11.1", "11.4", "11.7", "12.1", "12.4", "12.7", "12.10", "13.1", "13.4", "13.7"] },
+    { "id": 5, "tasks": ["4.2", "4.5", "4.8", "4.11", "5.2", "5.5", "5.8", "5.11", "6.2", "6.5", "6.8", "6.11", "7.2", "7.5", "7.8", "7.11", "8.2", "8.5", "9.2", "9.5", "10.2", "10.5", "11.2", "11.5", "11.8", "12.2", "12.5", "12.8", "12.11", "13.2", "13.5", "13.8"] },
+    { "id": 6, "tasks": ["4.3", "4.6", "4.9", "4.12", "5.3", "5.6", "5.9", "5.12", "6.3", "6.6", "6.9", "6.12", "7.3", "7.6", "7.9", "7.12", "8.3", "8.6", "9.3", "9.6", "10.3", "10.6", "11.3", "11.6", "11.9", "12.3", "12.6", "12.9", "12.12", "13.3", "13.6", "13.9"] },
+    { "id": 7, "tasks": ["14.1", "14.2", "14.3", "14.4", "14.5", "15.1", "15.2", "16.1", "16.2", "16.3", "16.4", "16.5", "16.6", "16.7"] },
+    { "id": 8, "tasks": ["17.1", "17.2", "17.3", "17.4", "17.5", "17.6", "17.7", "17.8", "17.9", "17.10", "17.11", "17.12", "17.13", "17.14", "17.15", "17.16", "17.17", "17.18", "17.19", "17.20"] },
+    { "id": 9, "tasks": ["18.1"] }
+  ]
+}
+```

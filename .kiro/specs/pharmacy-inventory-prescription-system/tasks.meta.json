@@ -1,0 +1,1589 @@
+{
+  "pbtResults": {
+    "3.5 Write property test for valid status transitions": {
+      "status": "passed",
+      "lastRunTimestamp": 1787155140505
+    },
+    "5.4 Write property test for non-negative stock": {
+      "status": "passed",
+      "lastRunTimestamp": 1787155736691
+    }
+  },
+  "executionHistory": {
+    "1. Set up project scaffolding and build configuration": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247755
+      },
+      {
+        "executionId": "0e4d8669-2a41-4de9-80e1-ee02df948f39",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138636848
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787150364583
+      }
+    ],
+    "2.1 Implement AccountStatus enum and RolePermission model": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247834
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138262918
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138465165
+      }
+    ],
+    "2.2 Implement UserAccount model with lifecycle behaviour": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247859
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787150439830
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151731379
+      }
+    ],
+    "2.3 Implement Credential model with verification and password policy": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247888
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787150440868
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151732307
+      }
+    ],
+    "2.4 Implement UserProfile hierarchy including Patient business record": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247908
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787150441962
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151732877
+      }
+    ],
+    "2.5 Write unit tests for security/user models": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247939
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153557375
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881492
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154894540
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155755396
+      }
+    ],
+    "3.1 Implement PrescriptionStatus enum with allowed transitions": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247959
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138268578
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138470424
+      }
+    ],
+    "3.2 Implement PrescriptionItem model": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138247977
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138273446
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138479149
+      }
+    ],
+    "3.3 Implement Prescription aggregate with status and expiry behaviour (Algorithm 3)": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248000
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787150442700
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151729342
+      }
+    ],
+    "3.4 Write property test for prescription expiry": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248022
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153559611
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881534
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154894878
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155755431
+      }
+    ],
+    "3.5 Write property test for valid status transitions": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248050
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153561871
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881558
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154895224
+      }
+    ],
+    "3.6 Write unit tests for prescription models": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248077
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153564117
+      },
+      {
+        "executionId": "e3eadcaf-41ce-4053-8349-5cc21e1d59f8",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787154268300
+      },
+      {
+        "executionId": "e3eadcaf-41ce-4053-8349-5cc21e1d59f8",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787154831135
+      }
+    ],
+    "4.1 Implement PrescriptionStatusSummary read model": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248110
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138278486
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138488956
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787150420914
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151730159
+      }
+    ],
+    "4.2 Implement Notification model with dedup key and state transitions": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248133
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151740837
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787152112726
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153510047
+      }
+    ],
+    "4.3 Write unit tests for patient information models": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248151
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153564233
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881583
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154895510
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155756473
+      }
+    ],
+    "5.1 Implement Medicine and StockMovement models": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248172
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138284319
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138483884
+      }
+    ],
+    "5.2 Implement InventoryItem model with expiry and deduction behaviour": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248193
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151741934
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787152114809
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153512375
+      }
+    ],
+    "5.3 Implement DispenseRecord model with fulfilment state machine": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248211
+      },
+      {
+        "executionId": "d318988b-ab5e-45dd-b268-80950f34b5cd",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787151742692
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787152114877
+      },
+      {
+        "executionId": "926ae160-b2ff-42d6-977e-b6edf1407af6",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787153512404
+      }
+    ],
+    "5.4 Write property test for non-negative stock": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248239
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881607
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154895941
+      }
+    ],
+    "5.5 Write unit tests for pharmacy operations models": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248260
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881631
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155769056
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787156272529
+      }
+    ],
+    "6.1 Implement ReportCriteria and Report models with snapshot behaviour": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248281
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138289218
+      },
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138494165
+      }
+    ],
+    "6.2 Write unit tests for report models": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248301
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881655
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155769360
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787156272857
+      }
+    ],
+    "7. Checkpoint - domain models": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248322
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881683
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158474911
+      }
+    ],
+    "8.1 Define Storage interfaces for all aggregates": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248342
+      },
+      {
+        "executionId": "e3eadcaf-41ce-4053-8349-5cc21e1d59f8",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787154267921
+      },
+      {
+        "executionId": "e3eadcaf-41ce-4053-8349-5cc21e1d59f8",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787154830588
+      }
+    ],
+    "8.2 Implement in-memory Storage implementations": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248361
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881715
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787156294044
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675191
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157684497
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158228741
+      }
+    ],
+    "8.3 Write unit tests for in-memory Storage implementations": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248388
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881740
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158473747
+      }
+    ],
+    "9.1 Implement SessionController with session-expiry enforcement (Algorithm 4)": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248410
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881763
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675241
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158236347
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158435434
+      }
+    ],
+    "9.2 Implement NavigationController": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248433
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881790
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675278
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158236662
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158434964
+      }
+    ],
+    "9.3 Write property test for session expiry": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248455
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881813
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158474068
+      }
+    ],
+    "9.4 Write unit tests for common controllers": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248476
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881834
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158474377
+      }
+    ],
+    "10.1 Implement AuthenticateAuthoriseController": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248494
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881858
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675305
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158463862
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158479599
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158781887
+      }
+    ],
+    "10.2 Implement ManageUserAccountController": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248517
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881882
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675331
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158463901
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158479909
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158781925
+      }
+    ],
+    "10.3 Implement ManageProfileController": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248537
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881907
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675361
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158463933
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158480269
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158782267
+      }
+    ],
+    "10.4 Write property test for self-service field protection": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248566
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881931
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159281253
+      }
+    ],
+    "10.5 Write unit tests for security/user controllers": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248590
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881957
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159281608
+      }
+    ],
+    "11.1 Implement ManagePrescriptionController and patient business records": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248609
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154881981
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675388
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158463959
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158480643
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158782705
+      }
+    ],
+    "11.2 Implement UpdatePrescriptionStatusController with optimistic concurrency": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248633
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882007
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675414
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158463984
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158481085
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158783216
+      }
+    ],
+    "11.3 Write unit tests for clinical prescription controllers": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248658
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882031
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159282090
+      }
+    ],
+    "12.1 Implement ViewPrescriptionStatusController with ownership isolation": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248681
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882057
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675456
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464010
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158788045
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159124697
+      }
+    ],
+    "12.2 Implement SendAlertsNotificationsController with de-duplication (Algorithm 6)": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248710
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882091
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675481
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464036
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158788370
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159123663
+      }
+    ],
+    "12.3 Write property test for draft invisibility": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248733
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882114
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159282476
+      }
+    ],
+    "12.4 Write property test for patient isolation": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248755
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882138
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159282823
+      }
+    ],
+    "12.5 Write property test for notification de-duplication": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248777
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882163
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159283180
+      }
+    ],
+    "12.6 Write property test for transaction independence of notification": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248800
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882190
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159283652
+      }
+    ],
+    "12.7 Write unit tests for patient information controllers": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248823
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882224
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159283971
+      }
+    ],
+    "13.1 Implement ManageMedicineInventoryController with stock adjustment (Algorithm 5)": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248843
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882247
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675510
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464086
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158788735
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159124174
+      }
+    ],
+    "13.2 Implement FEFO allocation planner (Algorithm 1)": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248867
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882267
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675538
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464113
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158789121
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159123551
+      }
+    ],
+    "13.3 Implement DispenseMedicationController orchestration (Algorithm 2)": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248889
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882300
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675565
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464137
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159129709
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159267092
+      }
+    ],
+    "13.4 Write property test for no over-dispensing": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248911
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882344
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159284356
+      }
+    ],
+    "13.5 Write property test for FEFO ordering": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248934
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882367
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159284730
+      }
+    ],
+    "13.6 Write property test for allocation conservation": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248955
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882393
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159285084
+      }
+    ],
+    "13.7 Write property test for idempotent fulfilment": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138248981
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882416
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159285461
+      }
+    ],
+    "13.8 Write property test for adjustment reason required": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249001
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882441
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159285819
+      }
+    ],
+    "13.9 Write unit tests for pharmacy operations controllers": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249023
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882464
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159286210
+      }
+    ],
+    "14.1 Implement GenerateReportsController with snapshot persistence (Algorithm 7)": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249043
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882484
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675594
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464165
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158789562
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159125170
+      }
+    ],
+    "14.2 Write property test for report snapshot immutability": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249067
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882511
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159286645
+      }
+    ],
+    "14.3 Write unit tests for the reports controller": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249089
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882535
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159287247
+      }
+    ],
+    "15. Checkpoint - controllers and property tests": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249110
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882561
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159276858
+      }
+    ],
+    "16.1 Implement the authenticated shell, login, and navigation Views": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249133
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882583
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675625
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464193
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159293443
+      }
+    ],
+    "16.2 Implement clinical prescription Views": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249155
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882611
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675655
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464218
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159293793
+      }
+    ],
+    "16.3 Implement patient information Views": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249178
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882633
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675693
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464247
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159292630
+      }
+    ],
+    "16.4 Implement pharmacy operations Views": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249201
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882658
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675721
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464293
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159292915
+      }
+    ],
+    "16.5 Implement management/DSS Views": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249223
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882682
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675746
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464318
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159294155
+      }
+    ],
+    "16.6 Implement account and profile Views": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249243
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882710
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675776
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464343
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159294593
+      }
+    ],
+    "17.1 Compose dependency wiring and launch the authenticated shell": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249266
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882734
+      },
+      {
+        "executionId": "1c94098e-421a-4d26-bff1-330bed13790f",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787157675798
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158464367
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159915880
+      },
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787160203073
+      }
+    ],
+    "17.2 Write end-to-end integration tests over wired controllers and storage": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249289
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882764
+      }
+    ],
+    "18. Final checkpoint - full build and test suite": [
+      {
+        "executionId": "b89aad7c-4c32-4904-bd49-f996bd4bc0e7",
+        "chatSessionId": "sess_3dd24e23-eb67-49b0-a034-d40ebda828ee",
+        "timestamp": 1787138249318
+      },
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787154882796
+      },
+      {
+        "executionId": "a75140f4-040b-40aa-97f6-8f93dcf71064",
+        "chatSessionId": "sess_2742bccf-e913-4602-938e-19b993b91ed3",
+        "timestamp": 1787160336214
+      }
+    ],
+    "2. Implement security/user domain models": [
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155755463
+      }
+    ],
+    "3. Implement clinical prescription domain models": [
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155755486
+      }
+    ],
+    "4. Implement patient information domain models": [
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787155756504
+      }
+    ],
+    "5. Implement pharmacy operations domain models": [
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787156272565
+      }
+    ],
+    "6. Implement management/DSS domain models": [
+      {
+        "executionId": "48f60216-fb7c-438f-a3fd-ddae1233d341",
+        "chatSessionId": "sess_921805c1-f98c-4db1-842b-f6f6b9b1fb54",
+        "timestamp": 1787156272890
+      }
+    ],
+    "8. Implement Storage contracts and in-memory implementations": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158228783
+      }
+    ],
+    "9. Implement common controllers": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158435476
+      }
+    ],
+    "10. Implement security/user controllers": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158782304
+      }
+    ],
+    "11. Implement clinical prescription controllers": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787158783244
+      }
+    ],
+    "12. Implement patient information controllers": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159124733
+      }
+    ],
+    "14. Implement management/DSS controller": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159125201
+      }
+    ],
+    "13. Implement pharmacy operations controllers": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787159267128
+      }
+    ],
+    "17. Wire the application together in Main.java": [
+      {
+        "executionId": "014faee6-a499-4b71-9ff5-55ef4cca355b",
+        "chatSessionId": "sess_44d276d1-5c98-4baf-8871-e9a9b04d7483",
+        "timestamp": 1787160203108
+      }
+    ]
+  }
+}

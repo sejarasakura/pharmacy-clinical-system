@@ -1,0 +1,10 @@
+cd "/Users/susielim/Documents/Software design "
+
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
+
+export PHARMACARE_ADMIN_USERNAME="admin"
+export PHARMACARE_ADMIN_EMAIL="admin@pharmacare.local"
+export PHARMACARE_ADMIN_PASSWORD="Admin@123"
+
+./gradlew bootRun

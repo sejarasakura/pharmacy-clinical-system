@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'org.springframework.boot' version '3.5.16'
+}
+
+group = 'pharmacy_system'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.5.16')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.xerial:sqlite-jdbc:3.46.1.0'
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.2'
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
+
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat:3.5.16'
+    runtimeOnly 'org.apache.tomcat.embed:tomcat-embed-jasper'
+
+    // JUnit 5 (Jupiter)
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+    
+    // JUnit Platform launcher
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.9.3'
+    
+    // jqwik for property-based testing
+    testImplementation 'net.jqwik:jqwik:1.7.4'
+    testImplementation 'net.jqwik:jqwik-time:1.7.4'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.jsoup:jsoup:1.21.2'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+springBoot {
+    mainClass = 'pharmacy_system.Main'
+}
