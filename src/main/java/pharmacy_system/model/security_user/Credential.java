@@ -46,14 +46,22 @@ public class Credential {
     public Credential(long credentialId, long userId, String passwordHash, int failedAttempts,
                       LocalDateTime lockedUntil, LocalDateTime passwordUpdatedAt,
                       PasswordHasher passwordHasher, long version) {
+        this(credentialId, userId, passwordHash, failedAttempts, lockedUntil,
+                passwordUpdatedAt, null, null, passwordHasher, version);
+    }
+
+    public Credential(long credentialId, long userId, String passwordHash, int failedAttempts,
+                      LocalDateTime lockedUntil, LocalDateTime passwordUpdatedAt,
+                      LocalDateTime resetTokenExpiry, String resetTokenHash,
+                      PasswordHasher passwordHasher, long version) {
         this.credentialId = credentialId;
         this.userId = userId;
         this.passwordHash = passwordHash;
         this.failedAttempts = failedAttempts;
         this.lockedUntil = lockedUntil;
         this.passwordUpdatedAt = passwordUpdatedAt;
-        this.resetTokenExpiry = null;
-        this.resetTokenHash = null;
+        this.resetTokenExpiry = resetTokenExpiry;
+        this.resetTokenHash = resetTokenHash;
         this.passwordHasher = passwordHasher;
         this.version = version;
     }
@@ -157,8 +165,7 @@ public class Credential {
             resetTokenExpiry = null;
             return false;
         }
-        // Actual token hash comparison deferred to planning phase
-        return false;  // placeholder
+        return passwordHasher.matches(token.toCharArray(), resetTokenHash);
     }
 
     /**

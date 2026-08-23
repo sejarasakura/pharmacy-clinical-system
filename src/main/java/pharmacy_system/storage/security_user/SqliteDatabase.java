@@ -19,6 +19,8 @@ public final class SqliteDatabase {
                 statement.executeUpdate("PRAGMA foreign_keys = ON");
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS user_accounts (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, email TEXT NOT NULL UNIQUE, status TEXT NOT NULL, approved INTEGER NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, last_login_at TEXT, disabled_at TEXT, disabled_reason TEXT, version INTEGER NOT NULL)");
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS credentials (credential_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL UNIQUE, password_hash TEXT NOT NULL, failed_attempts INTEGER NOT NULL, locked_until TEXT, password_updated_at TEXT NOT NULL, version INTEGER NOT NULL, FOREIGN KEY(user_id) REFERENCES user_accounts(user_id) ON DELETE CASCADE)");
+                ensureColumn(connection, "credentials", "reset_token_hash", "TEXT");
+                ensureColumn(connection, "credentials", "reset_token_expiry", "TEXT");
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS roles (role_id INTEGER PRIMARY KEY AUTOINCREMENT, role_name TEXT NOT NULL UNIQUE, permissions TEXT NOT NULL, active INTEGER NOT NULL, version INTEGER NOT NULL)");
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS user_roles (user_id INTEGER NOT NULL, role_id INTEGER NOT NULL, PRIMARY KEY(user_id, role_id), FOREIGN KEY(user_id) REFERENCES user_accounts(user_id) ON DELETE CASCADE, FOREIGN KEY(role_id) REFERENCES roles(role_id) ON DELETE CASCADE)");
             }
@@ -27,5 +29,23 @@ public final class SqliteDatabase {
         }
     }
 
-    public Connection connection() throws SQLException { return DriverManager.getConnection(url); }
+    public Connection connection() throws SQLException {
+        Connection connection = DriverManager.getConnection(url);
+        try (var statement = connection.createStatement()) {
+            statement.executeUpdate("PRAGMA foreign_keys = ON");
+        }
+        return connection;
+    }
+
+    private static void ensureColumn(Connection connection, String table, String column, String type)
+            throws SQLException {
+        try (var columns = connection.createStatement().executeQuery("PRAGMA table_info(" + table + ")")) {
+            while (columns.next()) {
+                if (column.equalsIgnoreCase(columns.getString("name"))) return;
+            }
+        }
+        try (var statement = connection.createStatement()) {
+            statement.executeUpdate("ALTER TABLE " + table + " ADD COLUMN " + column + " " + type);
+        }
+    }
 }

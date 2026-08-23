@@ -3,11 +3,14 @@ package pharmacy_system.controller.security_user;
 import pharmacy_system.model.security_user.RolePermission;
 import pharmacy_system.model.security_user.AccountStatus;
 import pharmacy_system.model.security_user.UserAccount;
+import pharmacy_system.model.security_user.Credential;
+import pharmacy_system.model.security_user.PasswordHasher;
 import pharmacy_system.model.security_user.profile.PatientProfile;
 import pharmacy_system.model.security_user.profile.UserProfile;
 import pharmacy_system.storage.security_user.RolePermissionStorage;
 import pharmacy_system.storage.security_user.UserAccountStorage;
 import pharmacy_system.storage.security_user.UserProfileStorage;
+import pharmacy_system.storage.security_user.CredentialStorage;
 import pharmacy_system.controller.common.SessionController;
 
 import java.util.ArrayList;
@@ -53,6 +56,8 @@ public class ManageUserAccountController {
     private final UserProfileStorage userProfileStorage;
     private final RolePermissionStorage rolePermissionStorage;
     private final SessionController sessionController;
+    private final CredentialStorage credentialStorage;
+    private final PasswordHasher passwordHasher;
 
     /**
      * Constructs a ManageUserAccountController with the supplied storage and
@@ -67,7 +72,9 @@ public class ManageUserAccountController {
             UserAccountStorage userAccountStorage,
             UserProfileStorage userProfileStorage,
             RolePermissionStorage rolePermissionStorage,
-            SessionController sessionController) {
+            SessionController sessionController,
+            CredentialStorage credentialStorage,
+            PasswordHasher passwordHasher) {
         if (userAccountStorage == null) {
             throw new IllegalArgumentException("userAccountStorage must not be null");
         }
@@ -80,10 +87,15 @@ public class ManageUserAccountController {
         if (sessionController == null) {
             throw new IllegalArgumentException("sessionController must not be null");
         }
+        if (credentialStorage == null || passwordHasher == null) {
+            throw new IllegalArgumentException("credential storage and password hasher must not be null");
+        }
         this.userAccountStorage = userAccountStorage;
         this.userProfileStorage = userProfileStorage;
         this.rolePermissionStorage = rolePermissionStorage;
         this.sessionController = sessionController;
+        this.credentialStorage = credentialStorage;
+        this.passwordHasher = passwordHasher;
     }
 
     /**
@@ -127,6 +139,10 @@ public class ManageUserAccountController {
      * @throws SessionController.InsufficientPermissionException if the session lacks permission
      */
     public UserAccount createUserAccount(String username, String email, String roleName) {
+        return createUserAccount(username, email, roleName, null);
+    }
+
+    public UserAccount createUserAccount(String username, String email, String roleName, char[] initialPassword) {
         sessionController.requirePermission("MANAGE_USER_ACCOUNT");
 
         // Validate mandatory fields
@@ -139,6 +155,7 @@ public class ManageUserAccountController {
         if (roleName == null || roleName.isBlank()) {
             return null;
         }
+        if (!Credential.validateNewPassword(initialPassword).isEmpty()) return null;
 
         // Check for duplicate username
         if (userAccountStorage.findByUsername(username).isPresent()) {
@@ -162,6 +179,13 @@ public class ManageUserAccountController {
 
         // Assign the role
         rolePermissionStorage.assignRoleToUser(created.getUserId(), roleOpt.get().getRoleId());
+        try {
+            credentialStorage.create(new Credential(0L, created.getUserId(), initialPassword, passwordHasher));
+        } catch (RuntimeException exception) {
+            rolePermissionStorage.removeRoleFromUser(created.getUserId(), roleOpt.get().getRoleId());
+            userAccountStorage.delete(created.getUserId());
+            throw exception;
+        }
 
         return created;
     }
@@ -394,6 +418,14 @@ public class ManageUserAccountController {
             String patientIdentifier,
             String username,
             String email) {
+        return provisionLoginForPatientRecord(patientIdentifier, username, email, null);
+    }
+
+    public UserAccount provisionLoginForPatientRecord(
+            String patientIdentifier,
+            String username,
+            String email,
+            char[] initialPassword) {
         sessionController.requirePermission("MANAGE_USER_ACCOUNT");
 
         // Validate mandatory fields
@@ -406,6 +438,7 @@ public class ManageUserAccountController {
         if (email == null || email.isBlank()) {
             return null;
         }
+        if (!Credential.validateNewPassword(initialPassword).isEmpty()) return null;
 
         // Find the unlinked Patient business record
         List<PatientProfile> allPatients = userProfileStorage.listByType(PatientProfile.class);
@@ -468,6 +501,7 @@ public class ManageUserAccountController {
 
         // Assign the Patient role to the new account
         rolePermissionStorage.assignRoleToUser(created.getUserId(), patientRoleOpt.get().getRoleId());
+        credentialStorage.create(new Credential(0L, created.getUserId(), initialPassword, passwordHasher));
 
         return created;
     }
@@ -528,11 +562,28 @@ public class ManageUserAccountController {
     public String createUser(@RequestParam(defaultValue = "") String username,
                              @RequestParam(defaultValue = "") String email,
                              @RequestParam(defaultValue = "") String role,
+                             @RequestParam(defaultValue = "") String initialPassword,
+                             @RequestParam(defaultValue = "") String confirmPassword,
                              @RequestParam(required = false) String patientIdentifier,
                              Model model, RedirectAttributes redirect) {
+        boolean passwordInvalid = initialPassword.length() < Credential.MIN_PASSWORD_LENGTH;
+        boolean confirmationInvalid = !initialPassword.equals(confirmPassword);
+        if (passwordInvalid || confirmationInvalid) {
+            UserAccountFormView form = new UserAccountFormView();
+            form.setUsernameInput(username);
+            form.setEmailInput(email);
+            model.addAttribute("form", form);
+            model.addAttribute("selectedRole", role);
+            if (passwordInvalid) model.addAttribute("initialPasswordError", "Password must contain at least 8 characters.");
+            if (confirmationInvalid) model.addAttribute("confirmPasswordError", "Password confirmation does not match.");
+            model.addAttribute("roles", rolePermissionStorage.listAll());
+            model.addAttribute("patientRecords", userProfileStorage.listByType(PatientProfile.class));
+            adminPage(model, "Add account");
+            return "admin/users/form";
+        }
         UserAccount created = "Patient".equalsIgnoreCase(role) && patientIdentifier != null && !patientIdentifier.isBlank()
-                ? provisionLoginForPatientRecord(patientIdentifier, username, email)
-                : createUserAccount(username, email, role);
+                ? provisionLoginForPatientRecord(patientIdentifier, username, email, initialPassword.toCharArray())
+                : createUserAccount(username, email, role, initialPassword.toCharArray());
         if (created == null) {
             UserAccountFormView form = new UserAccountFormView();
             form.setUsernameInput(username);
@@ -545,7 +596,7 @@ public class ManageUserAccountController {
             adminPage(model, "Add account");
             return "admin/users/form";
         }
-        redirect.addFlashAttribute("flash", new Flash("success", "Account created."));
+        redirect.addFlashAttribute("flash", new Flash("success", "Account created with an initial password. Approve it before first sign-in."));
         return "redirect:/admin/users";
     }
 

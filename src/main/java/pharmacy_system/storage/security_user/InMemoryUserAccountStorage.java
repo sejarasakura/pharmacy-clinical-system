@@ -35,26 +35,26 @@ public class InMemoryUserAccountStorage implements UserAccountStorage {
         store.put(userId, created);
         usernameIndex.put(account.getUsername(), userId);
         emailIndex.put(account.getEmail(), userId);
-        return created;
+        return copy(created);
     }
 
     @Override
     public Optional<UserAccount> findById(long userId) {
-        return Optional.ofNullable(store.get(userId));
+        return Optional.ofNullable(store.get(userId)).map(InMemoryUserAccountStorage::copy);
     }
 
     @Override
     public Optional<UserAccount> findByUsername(String username) {
         Long userId = usernameIndex.get(username);
         if (userId == null) return Optional.empty();
-        return Optional.ofNullable(store.get(userId));
+        return Optional.ofNullable(store.get(userId)).map(InMemoryUserAccountStorage::copy);
     }
 
     @Override
     public Optional<UserAccount> findByEmail(String email) {
         Long userId = emailIndex.get(email);
         if (userId == null) return Optional.empty();
-        return Optional.ofNullable(store.get(userId));
+        return Optional.ofNullable(store.get(userId)).map(InMemoryUserAccountStorage::copy);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class InMemoryUserAccountStorage implements UserAccountStorage {
 
     @Override
     public List<UserAccount> listAll() {
-        return new ArrayList<>(store.values());
+        return store.values().stream().map(InMemoryUserAccountStorage::copy).toList();
     }
 
     @Override
@@ -120,5 +120,13 @@ public class InMemoryUserAccountStorage implements UserAccountStorage {
                     return row;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static UserAccount copy(UserAccount account) {
+        return new UserAccount(
+                account.getUserId(), account.getUsername(), account.getEmail(), account.getStatus(),
+                account.isRegistrationApproved(), account.getCreatedAt(), account.getUpdatedAt(),
+                account.getLastLoginAt(), account.getDisabledAt(), account.getDisabledReason(),
+                account.getVersion());
     }
 }

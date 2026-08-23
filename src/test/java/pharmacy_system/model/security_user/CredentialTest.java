@@ -192,4 +192,27 @@ class CredentialTest {
         assertEquals(lockedUntil, credential.getLockedUntil());
         assertEquals(passwordUpdatedAt, credential.getPasswordUpdatedAt());
     }
+
+    @Test
+    void resetTokenIsHashedValidatedAndCleared() {
+        String token = "100.secure-one-time-token";
+        credential.setResetToken(passwordHasher.hash(token.toCharArray()));
+
+        assertTrue(credential.isResetTokenValid(token));
+        assertFalse(credential.isResetTokenValid("100.wrong-token"));
+
+        credential.clearResetToken();
+        assertFalse(credential.isResetTokenValid(token));
+    }
+
+    @Test
+    void expiredResetTokenIsRejected() {
+        String token = "100.expired-token";
+        Credential expired = new Credential(
+                1L, 100L, credential.getPasswordHash(), 0, null, LocalDateTime.now(),
+                LocalDateTime.now().minusMinutes(1), passwordHasher.hash(token.toCharArray()),
+                passwordHasher, 1L);
+
+        assertFalse(expired.isResetTokenValid(token));
+    }
 }

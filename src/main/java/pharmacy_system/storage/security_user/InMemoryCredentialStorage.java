@@ -36,6 +36,8 @@ public class InMemoryCredentialStorage implements CredentialStorage {
                 credential.getFailedAttempts(),
                 credential.getLockedUntil(),
                 credential.getPasswordUpdatedAt(),
+                credential.getResetTokenExpiry(),
+                credential.getResetTokenHash(),
                 passwordHasher,
                 1L
         );
@@ -73,6 +75,8 @@ public class InMemoryCredentialStorage implements CredentialStorage {
                 credential.getFailedAttempts(),
                 credential.getLockedUntil(),
                 credential.getPasswordUpdatedAt(),
+                credential.getResetTokenExpiry(),
+                credential.getResetTokenHash(),
                 passwordHasher,
                 expectedVersion + 1
         );

@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.security.SecureRandom;
+import java.util.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +51,7 @@ import pharmacy_system.view.common.Flash;
  */
 @Controller
 public class AuthenticateAuthoriseController {
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private final SessionController sessionController;
     private final NavigationController navigationController;
     private final UserAccountStorage userAccountStorage;
@@ -214,35 +217,35 @@ public class AuthenticateAuthoriseController {
      *         token delivery succeeds); {@code false} if no account is found
      */
     public boolean requestPasswordReset(String email) {
-        if (email == null || email.isBlank()) {
-            return false;
-        }
+        return issuePasswordReset(email).isPresent();
+    }
 
-        Optional<UserAccount> accountOpt = userAccountStorage.findByEmail(email);
+    /** Issues a one-time reset token for a matching username or email address. */
+    public Optional<String> issuePasswordReset(String identity) {
+        if (identity == null || identity.isBlank()) return Optional.empty();
+
+        String normalised = identity.trim();
+        Optional<UserAccount> accountOpt = normalised.contains("@")
+                ? userAccountStorage.findByEmail(normalised)
+                : userAccountStorage.findByUsername(normalised);
         if (accountOpt.isEmpty()) {
-            return false; // No account with this email
+            return Optional.empty();
         }
 
         UserAccount account = accountOpt.get();
         Optional<Credential> credentialOpt = credentialStorage.findByUserId(account.getUserId());
         if (credentialOpt.isEmpty()) {
-            return false; // Should not happen; no credential for this account
+            return Optional.empty();
         }
 
         Credential credential = credentialOpt.get();
 
-        // Generate a placeholder reset token (deferred to planning for real implementation)
-        // In a real system, this would be a cryptographically secure token with expiry
-        String resetToken = generateResetToken(account.getUserId(), email);
-
-        // Store the reset token in the credential (placeholder implementation)
-        // Token expiry would be stored in a dedicated field (deferred)
-        credential.changePasswordHash(resetToken); // Temporary storage (deferred to planning)
+        String resetToken = generateResetToken(account.getUserId());
+        credential.setResetToken(passwordHasher.hash(resetToken.toCharArray()));
 
         // Update credential in storage
-        credentialStorage.update(credential, credential.getVersion());
-
-        return true;
+        if (!credentialStorage.update(credential, credential.getVersion())) return Optional.empty();
+        return Optional.of(resetToken);
     }
 
     /**
@@ -280,9 +283,6 @@ public class AuthenticateAuthoriseController {
             return false;
         }
 
-        // Placeholder: extract user ID from token (real implementation would verify
-        // cryptographic integrity)
-        // For now, assume token contains user ID encoded (very simplified)
         long userId = decodeUserIdFromToken(token);
         if (userId <= 0) {
             return false; // Invalid token
@@ -295,8 +295,10 @@ public class AuthenticateAuthoriseController {
         }
 
         Credential credential = credentialOpt.get();
+        if (!credential.isResetTokenValid(token)) return false;
         try {
             credential.changePassword(newPassword);
+            credential.clearResetToken();
         } catch (IllegalArgumentException e) {
             // Password validation failed (Requirement 1.5)
             return false;
@@ -364,11 +366,12 @@ public class AuthenticateAuthoriseController {
 
     @PostMapping("/password/recovery")
     public String passwordRecoverySubmit(@RequestParam(defaultValue = "") String identity, Model model) {
-        requestPasswordReset(identity);
+        Optional<String> resetToken = issuePasswordReset(identity);
         model.addAttribute("identity", identity);
         model.addAttribute("title", "Recover password");
         model.addAttribute("recoveryMessage",
                 "If an account matches those details, password-reset instructions will be sent.");
+        resetToken.ifPresent(token -> model.addAttribute("recoveryHref", "/password/reset?token=" + token));
         return "auth/password-recovery";
     }
 
@@ -460,9 +463,10 @@ public class AuthenticateAuthoriseController {
      * @param email the email address for cross-reference
      * @return a placeholder reset token
      */
-    private String generateResetToken(long userId, String email) {
-        // Placeholder: simple concatenation (NOT secure; deferred to planning)
-        return "reset_" + userId + "_" + email.hashCode() + "_" + System.currentTimeMillis();
+    private String generateResetToken(long userId) {
+        byte[] random = new byte[32];
+        SECURE_RANDOM.nextBytes(random);
+        return userId + "." + Base64.getUrlEncoder().withoutPadding().encodeToString(random);
     }
 
     /**
@@ -474,14 +478,9 @@ public class AuthenticateAuthoriseController {
      * @return the extracted user ID, or -1 if invalid
      */
     private long decodeUserIdFromToken(String token) {
-        // Placeholder: extract user ID from token format "reset_<userId>_..."
         try {
-            if (token.startsWith("reset_")) {
-                String[] parts = token.split("_");
-                if (parts.length >= 2) {
-                    return Long.parseLong(parts[1]);
-                }
-            }
+            int separator = token.indexOf('.');
+            if (separator > 0) return Long.parseLong(token.substring(0, separator));
         } catch (NumberFormatException e) {
             // Invalid token format
         }

@@ -59,7 +59,9 @@ public class Main {
         return new Sha256PasswordHasher();
     }
 
-    @Bean SqliteDatabase sqliteDatabase() { return new SqliteDatabase(Path.of("data", "pharmacare.db")); }
+    @Bean SqliteDatabase sqliteDatabase() {
+        return new SqliteDatabase(Path.of(environmentOrDefault("PHARMACARE_DB_PATH", "data/pharmacare.db")));
+    }
     @Bean UserAccountStorage userAccountStorage(SqliteDatabase database) { return new SqliteUserAccountStorage(database); }
     @Bean CredentialStorage credentialStorage(SqliteDatabase database, PasswordHasher hasher) { return new SqliteCredentialStorage(database, hasher); }
     @Bean RolePermissionStorage rolePermissionStorage(SqliteDatabase database) { return new SqliteRolePermissionStorage(database); }
