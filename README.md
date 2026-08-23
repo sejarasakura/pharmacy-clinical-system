@@ -53,7 +53,13 @@ SQLite is used for security and registration data at `data/pharmacare.db`:
 
 This means registered users can sign in after an application restart. The database is local development data and is deliberately ignored by Git.
 
-The remaining clinical, profile, notification, medicine, inventory, dispensing, and reporting stores currently use in-memory implementations. Their data is reset when the server restarts. They are isolated behind storage interfaces so that each can be migrated to SQLite without changing controllers or views.
+The database schema also includes profile, clinical, notification, medicine, inventory, dispensing, and reporting tables. After the application has started once (and therefore initialised the schema), a small, fictional, referentially consistent fixture set in `data/sample-data.sql` may be applied safely more than once:
+
+```bash
+sqlite3 data/pharmacare.db < data/sample-data.sql
+```
+
+The current application adapters for those latter domains remain in-memory, so their screens do not yet read the durable tables and still reset on restart. The database tables and fixtures provide the migration target; moving the adapters to SQLite is the remaining step to expose these records in the UI.
 
 ## Project structure
 

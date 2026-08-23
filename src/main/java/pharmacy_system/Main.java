@@ -19,8 +19,8 @@ import pharmacy_system.storage.patient_information.InMemoryNotificationStorage;
 import pharmacy_system.storage.patient_information.NotificationStorage;
 import pharmacy_system.storage.pharmacy_operations.DispenseStorage;
 import pharmacy_system.storage.pharmacy_operations.InMemoryDispenseRecordStorage;
-import pharmacy_system.storage.pharmacy_operations.InMemoryInventoryItemStorage;
-import pharmacy_system.storage.pharmacy_operations.InMemoryMedicineStorage;
+import pharmacy_system.storage.pharmacy_operations.SqliteInventoryStorage;
+import pharmacy_system.storage.pharmacy_operations.SqliteMedicineStorage;
 import pharmacy_system.storage.pharmacy_operations.InventoryStorage;
 import pharmacy_system.storage.pharmacy_operations.MedicineStorage;
 import pharmacy_system.storage.security_user.CredentialStorage;
@@ -68,8 +68,8 @@ public class Main {
     @Bean UserProfileStorage userProfileStorage() { return new InMemoryUserProfileStorage(); }
     @Bean PrescriptionStorage prescriptionStorage() { return new InMemoryPrescriptionStorage(); }
     @Bean NotificationStorage notificationStorage() { return new InMemoryNotificationStorage(); }
-    @Bean MedicineStorage medicineStorage() { return new InMemoryMedicineStorage(); }
-    @Bean InventoryStorage inventoryStorage() { return new InMemoryInventoryItemStorage(); }
+    @Bean MedicineStorage medicineStorage(SqliteDatabase database) { return new SqliteMedicineStorage(database); }
+    @Bean InventoryStorage inventoryStorage(SqliteDatabase database) { return new SqliteInventoryStorage(database); }
     @Bean DispenseStorage dispenseStorage() { return new InMemoryDispenseRecordStorage(); }
     @Bean ReportStorage reportStorage() { return new InMemoryReportStorage(); }
 
@@ -78,7 +78,8 @@ public class Main {
     CommandLineRunner bootstrapAdministrator(UserAccountStorage accounts,
                                              CredentialStorage credentials,
                                              RolePermissionStorage roles,
-                                             PasswordHasher hasher) {
+                                             PasswordHasher hasher,
+                                             SqliteDatabase database) {
         return args -> {
             RolePermission patient = seedRole(roles, "Patient", Set.of(
                     "MANAGE_PROFILE", "VIEW_PRESCRIPTION_STATUS", "VIEW_NOTIFICATIONS"));
@@ -98,18 +99,67 @@ public class Main {
             String email = environmentOrDefault("PHARMACARE_ADMIN_EMAIL", "admin@pharmacare.local");
             String password = environmentOrDefault("PHARMACARE_ADMIN_PASSWORD", "Admin@123");
 
-            if (accounts.findByUsername(username).isPresent()) {
-                return;
+            if (accounts.findByUsername(username).isEmpty()) {
+                UserAccount pending = new UserAccount(0L, username, email);
+                pending.approveRegistration();
+                UserAccount admin = accounts.create(pending);
+                credentials.create(new Credential(0L, admin.getUserId(), password.toCharArray(), hasher));
+                if (!roles.assignRoleToUser(admin.getUserId(), administrator.getRoleId())) {
+                    throw new IllegalStateException("Administrator role assignment failed");
+                }
             }
 
-            UserAccount pending = new UserAccount(0L, username, email);
-            pending.approveRegistration();
-            UserAccount admin = accounts.create(pending);
-            credentials.create(new Credential(0L, admin.getUserId(), password.toCharArray(), hasher));
-            if (!roles.assignRoleToUser(admin.getUserId(), administrator.getRoleId())) {
-                throw new IllegalStateException("Administrator role assignment failed");
-            }
+            seedDemoAccount(accounts, credentials, roles, hasher,
+                    "pharmacist.demo", "pharmacist.demo@pharmacare.local", "Demo@12345", pharmacist);
+            UserAccount ainaDemo = seedDemoAccount(accounts, credentials, roles, hasher,
+                    "aina.patient", "aina.rahman@pharmacare.local", "Demo@12345", patient);
+            UserAccount danielDemo = seedDemoAccount(accounts, credentials, roles, hasher,
+                    "daniel.patient", "daniel.wong@pharmacare.local", "Demo@12345", patient);
+            UserAccount kavithaDemo = seedDemoAccount(accounts, credentials, roles, hasher,
+                    "kavitha.patient", "kavitha.devi@pharmacare.local", "Demo@12345", patient);
+            UserAccount faridahDemo = seedDemoAccount(accounts, credentials, roles, hasher,
+                    "faridah.patient", "faridah.osman@pharmacare.local", "Demo@12345", patient);
+            UserAccount marcusDemo = seedDemoAccount(accounts, credentials, roles, hasher,
+                    "marcus.patient", "marcus.lee@pharmacare.local", "Demo@12345", patient);
+            UserAccount nurulDemo = seedDemoAccount(accounts, credentials, roles, hasher,
+                    "nurul.patient", "nurul.huda@pharmacare.local", "Demo@12345", patient);
+            linkProfile(database, 101L, ainaDemo.getUserId());
+            linkProfile(database, 102L, danielDemo.getUserId());
+            linkProfile(database, 103L, kavithaDemo.getUserId());
+            linkProfile(database, 104L, faridahDemo.getUserId());
+            linkProfile(database, 105L, marcusDemo.getUserId());
+            linkProfile(database, 106L, nurulDemo.getUserId());
         };
+    }
+
+    /** Creates an active, role-assigned development identity only when it is absent. */
+    private static UserAccount seedDemoAccount(UserAccountStorage accounts,
+                                               CredentialStorage credentials,
+                                               RolePermissionStorage roles,
+                                               PasswordHasher hasher,
+                                               String username, String email, String password,
+                                               RolePermission role) {
+        UserAccount account = accounts.findByUsername(username).orElseGet(() -> {
+            UserAccount created = new UserAccount(0L, username, email);
+            created.approveRegistration();
+            UserAccount persisted = accounts.create(created);
+            credentials.create(new Credential(0L, persisted.getUserId(), password.toCharArray(), hasher));
+            return persisted;
+        });
+        roles.assignRoleToUser(account.getUserId(), role.getRoleId());
+        return account;
+    }
+
+    private static void linkProfile(SqliteDatabase database, long profileId, long userId) {
+        try (var connection = database.connection();
+             var statement = connection.prepareStatement(
+                     "UPDATE user_profiles SET user_id = ?, updated_at = CURRENT_TIMESTAMP WHERE profile_id = ?")) {
+            statement.setLong(1, userId);
+            statement.setLong(2, profileId);
+            statement.executeUpdate();
+        } catch (java.sql.SQLException exception) {
+            throw new IllegalStateException("Could not link the sample patient profile", exception);
+        }
     }
 
     private static RolePermission seedRole(RolePermissionStorage roles,
