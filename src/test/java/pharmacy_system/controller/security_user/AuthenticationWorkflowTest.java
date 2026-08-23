@@ -70,4 +70,17 @@ class AuthenticationWorkflowTest {
         assertFalse(authenticationController.authenticate("doctor.two", "Doctor@123".toCharArray()));
         assertTrue(authenticationController.authenticate("doctor.two", "Replacement@123".toCharArray()));
     }
+
+    @Test
+    void existingDoctorWithoutCredentialCanReceiveInitialPassword() {
+        UserAccount doctor = accounts.create(new UserAccount(
+                0L, "doctor.legacy", "doctor.legacy@example.test"));
+        RolePermission doctorRole = roles.findByRoleName("Doctor").orElseThrow();
+        roles.assignRoleToUser(doctor.getUserId(), doctorRole.getRoleId());
+
+        assertTrue(accountController.setInitialPassword(doctor.getUserId(), "Doctor@123".toCharArray()));
+        assertFalse(accountController.setInitialPassword(doctor.getUserId(), "Different@123".toCharArray()));
+        assertTrue(accountController.approveRegistration(doctor.getUserId()));
+        assertTrue(authenticationController.authenticate("doctor.legacy", "Doctor@123".toCharArray()));
+    }
 }

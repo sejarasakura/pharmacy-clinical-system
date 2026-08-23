@@ -190,6 +190,18 @@ public class ManageUserAccountController {
         return created;
     }
 
+    /** Creates the missing first-login credential for an existing account. */
+    public boolean setInitialPassword(long userId, char[] initialPassword) {
+        sessionController.requirePermission("MANAGE_USER_ACCOUNT");
+        if (!Credential.validateNewPassword(initialPassword).isEmpty()
+                || userAccountStorage.findById(userId).isEmpty()
+                || credentialStorage.findByUserId(userId).isPresent()) {
+            return false;
+        }
+        credentialStorage.create(new Credential(0L, userId, initialPassword, passwordHasher));
+        return true;
+    }
+
     /**
      * Approves a pending user account registration, making it eligible for
      * authentication once the account status is ACTIVE.
@@ -626,9 +638,27 @@ public class ManageUserAccountController {
         model.addAttribute("account", account.get());
         model.addAttribute("assignedRoles", rolePermissionStorage.findRolesByUserId(id));
         model.addAttribute("roles", rolePermissionStorage.listAll());
+        model.addAttribute("hasCredential", credentialStorage.findByUserId(id).isPresent());
         model.addAttribute("form", new UserAccountFormView());
         adminPage(model, "Role and access");
         return "admin/users/access";
+    }
+
+    @PostMapping("/admin/users/{id}/initial-password")
+    public String setInitialPassword(@PathVariable long id,
+                                     @RequestParam(defaultValue = "") String initialPassword,
+                                     @RequestParam(defaultValue = "") String confirmPassword,
+                                     RedirectAttributes redirect) {
+        if (initialPassword.length() < Credential.MIN_PASSWORD_LENGTH) {
+            redirect.addFlashAttribute("flash", new Flash("danger", "Password must contain at least 8 characters."));
+        } else if (!initialPassword.equals(confirmPassword)) {
+            redirect.addFlashAttribute("flash", new Flash("danger", "Password confirmation does not match."));
+        } else if (setInitialPassword(id, initialPassword.toCharArray())) {
+            redirect.addFlashAttribute("flash", new Flash("success", "Initial password saved. Approve the account before first sign-in."));
+        } else {
+            redirect.addFlashAttribute("flash", new Flash("warning", "An initial password is already set or the account is unavailable."));
+        }
+        return "redirect:/admin/users/" + id + "/access";
     }
 
     @PostMapping("/admin/users/{id}/approve")
